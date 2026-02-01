@@ -161,7 +161,15 @@ export default function WeeklyPlan() {
 
             <View style={styles.mealsContainer}>
               {day.meals.map((meal, mealIndex) => (
-                <View key={mealIndex} style={styles.mealItem}>
+                <TouchableOpacity
+                  key={mealIndex}
+                  style={styles.mealItem}
+                  onPress={() => router.push({
+                    pathname: '/recipe-detail',
+                    params: { recipeId: meal.recipe.id }
+                  })}
+                  activeOpacity={0.7}
+                >
                   <View 
                     style={[
                       styles.mealTypeIndicator, 

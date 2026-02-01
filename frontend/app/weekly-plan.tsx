@@ -199,7 +199,7 @@ export default function WeeklyPlan() {
                   >
                     <Ionicons name="swap-horizontal" size={20} color={colors.primary} />
                   </TouchableOpacity>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           </Card>

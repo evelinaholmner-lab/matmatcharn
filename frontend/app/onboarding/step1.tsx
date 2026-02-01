@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,14 +8,25 @@ import { Card } from '../components/Card';
 import { colors } from '../utils/colors';
 import { Ionicons } from '@expo/vector-icons';
 
+const LOCATIONS = [
+  { name: 'Umeå', region: 'Västerbotten' },
+  { name: 'Bygdeå', region: 'Västerbotten' },
+  { name: 'Skellefteå', region: 'Västerbotten' },
+  { name: 'Lycksele', region: 'Västerbotten' },
+];
+
 export default function OnboardingStep1() {
   const router = useRouter();
   const [numberOfPeople, setNumberOfPeople] = useState(2);
+  const [selectedLocation, setSelectedLocation] = useState('Umeå');
 
   const handleNext = () => {
     router.push({
       pathname: '/onboarding/step2',
-      params: { numberOfPeople: numberOfPeople.toString() }
+      params: { 
+        numberOfPeople: numberOfPeople.toString(),
+        location: selectedLocation
+      }
     });
   };
 

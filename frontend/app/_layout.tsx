@@ -10,9 +10,9 @@ export default function RootLayout() {
         <Stack.Screen name="onboarding/step1" />
         <Stack.Screen name="onboarding/step2" />
         <Stack.Screen name="onboarding/step3" />
+        <Stack.Screen name="weekly-plan" />
         <Stack.Screen name="profile" />
         <Stack.Screen name="shopping-list" />
-        <Stack.Screen name="recipe-detail" />
       </Stack>
     </SafeAreaProvider>
   );

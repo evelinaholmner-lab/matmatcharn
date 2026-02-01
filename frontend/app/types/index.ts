@@ -5,6 +5,21 @@ export type Allergen = 'nöt' | 'ägg' | 'laktos' | 'mjölkprotein' | 'gluten';
 export type MealType = 'frukost' | 'lunch' | 'middag' | 'mellanmål';
 export type Store = 'ICA' | 'Coop' | 'Willys';
 
+// Specific store names
+export type SpecificStore = 
+  | 'ICA Maxi Umeå'
+  | 'ICA Kvantum Ersboda'
+  | 'ICA Nära Bygdeå'
+  | 'ICA Maxi Skellefteå'
+  | 'ICA Maxi Lycksele'
+  | 'Coop Forum Umeå'
+  | 'Coop Bygdeå'
+  | 'Coop Forum Skellefteå'
+  | 'Coop Lycksele'
+  | 'Willys Vasaplan'
+  | 'Willys Skellefteå'
+  | 'Willys Lycksele';
+
 export interface Ingredient {
   name: string;
   amount: number;

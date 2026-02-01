@@ -13,6 +13,7 @@ export default function RootLayout() {
         <Stack.Screen name="weekly-plan" />
         <Stack.Screen name="profile" />
         <Stack.Screen name="shopping-list" />
+        <Stack.Screen name="recipe-detail" />
       </Stack>
     </SafeAreaProvider>
   );

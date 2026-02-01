@@ -9,7 +9,7 @@ import { Button } from './components/Button';
 import { colors } from './utils/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { format } from 'date-fns';
-import { sv } from 'date-fns/locale/sv';
+import { sv } from 'date-fns/locale';
 import { Recipe, MealType } from './types';
 import { recipes } from './data/recipes';
 

@@ -36,30 +36,61 @@ export default function OnboardingStep1() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <Text style={styles.title}>Välkommen!</Text>
-          <Text style={styles.subtitle}>Hur många är ni i hushållet?</Text>
+          <Text style={styles.subtitle}>Låt oss komma igång</Text>
         </View>
 
+        {/* Location Selector */}
+        <Card style={styles.card}>
+          <View style={styles.iconCircle}>
+            <Ionicons name="location" size={40} color={colors.secondary} />
+          </View>
+          <Text style={styles.cardTitle}>Var bor du?</Text>
+          <View style={styles.locationGrid}>
+            {LOCATIONS.map((loc) => (
+              <TouchableOpacity
+                key={loc.name}
+                style={[
+                  styles.locationButton,
+                  selectedLocation === loc.name && styles.locationButtonSelected
+                ]}
+                onPress={() => setSelectedLocation(loc.name)}
+              >
+                <Text style={[
+                  styles.locationText,
+                  selectedLocation === loc.name && styles.locationTextSelected
+                ]}>
+                  {loc.name}
+                </Text>
+                <Text style={styles.locationRegion}>{loc.region}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Card>
+
+        {/* People Counter */}
         <Card style={styles.card}>
           <View style={styles.counterContainer}>
-            <View style={styles.iconCircle}>
+            <View style={[styles.iconCircle, { backgroundColor: colors.primaryLight + '30' }]}>
               <Ionicons name="people" size={40} color={colors.primary} />
             </View>
             
             <View style={styles.counter}>
-              <Text style={styles.counterLabel}>Antal personer</Text>
+              <Text style={styles.cardTitle}>Hur många är ni i hushållet?</Text>
               <View style={styles.counterButtons}>
-                <Button 
-                  title="-"
+                <TouchableOpacity
+                  style={styles.counterButton}
                   onPress={() => setNumberOfPeople(Math.max(1, numberOfPeople - 1))}
-                  variant="outline"
                   disabled={numberOfPeople <= 1}
-                />
+                >
+                  <Ionicons name="remove" size={24} color={numberOfPeople <= 1 ? colors.textLight : colors.primary} />
+                </TouchableOpacity>
                 <Text style={styles.counterValue}>{numberOfPeople}</Text>
-                <Button 
-                  title="+"
+                <TouchableOpacity
+                  style={styles.counterButton}
                   onPress={() => setNumberOfPeople(Math.min(10, numberOfPeople + 1))}
-                  variant="outline"
-                />
+                >
+                  <Ionicons name="add" size={24} color={colors.primary} />
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -68,7 +99,7 @@ export default function OnboardingStep1() {
         <View style={styles.infoBox}>
           <Ionicons name="information-circle-outline" size={20} color={colors.primary} />
           <Text style={styles.infoText}>
-            Vi kommer anpassa portionsstorlekarna efter antalet personer
+            Vi visar butiker nära {selectedLocation} och anpassar portionsstorlekarna efter {numberOfPeople} {numberOfPeople === 1 ? 'person' : 'personer'}
           </Text>
         </View>
       </ScrollView>
@@ -95,7 +126,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   header: {
-    marginBottom: 32,
+    marginBottom: 24,
   },
   title: {
     fontSize: 32,
@@ -108,33 +139,78 @@ const styles = StyleSheet.create({
     color: colors.textLight,
   },
   card: {
-    marginVertical: 16,
-  },
-  counterContainer: {
-    alignItems: 'center',
+    marginVertical: 12,
   },
   iconCircle: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.primaryLight + '30',
+    backgroundColor: colors.secondaryLight + '30',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
+    alignSelf: 'center',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  locationGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  locationButton: {
+    flex: 1,
+    minWidth: '45%',
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: colors.border,
+    backgroundColor: colors.background,
+    alignItems: 'center',
+  },
+  locationButtonSelected: {
+    borderColor: colors.secondary,
+    backgroundColor: colors.secondaryLight + '20',
+  },
+  locationText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.textLight,
+    marginBottom: 4,
+  },
+  locationTextSelected: {
+    color: colors.text,
+  },
+  locationRegion: {
+    fontSize: 12,
+    color: colors.textLight,
+  },
+  counterContainer: {
+    alignItems: 'center',
   },
   counter: {
     width: '100%',
     alignItems: 'center',
   },
-  counterLabel: {
-    fontSize: 16,
-    color: colors.textLight,
-    marginBottom: 16,
-  },
   counterButtons: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 24,
+    marginTop: 8,
+  },
+  counterButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   counterValue: {
     fontSize: 48,

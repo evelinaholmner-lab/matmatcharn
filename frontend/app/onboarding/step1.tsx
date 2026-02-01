@@ -11,8 +11,6 @@ import { Ionicons } from '@expo/vector-icons';
 const LOCATIONS = [
   { name: 'Umeå', region: 'Västerbotten' },
   { name: 'Bygdeå', region: 'Västerbotten' },
-  { name: 'Skellefteå', region: 'Västerbotten' },
-  { name: 'Lycksele', region: 'Västerbotten' },
 ];
 
 export default function OnboardingStep1() {

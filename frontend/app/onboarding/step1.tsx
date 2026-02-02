@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,23 +7,45 @@ import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { colors } from '../utils/colors';
 import { Ionicons } from '@expo/vector-icons';
-
-const LOCATIONS = [
-  { name: 'Umeå', region: 'Västerbotten' },
-  { name: 'Bygdeå', region: 'Västerbotten' },
-];
+import { geocodeAddress } from '../data/stores';
 
 export default function OnboardingStep1() {
   const router = useRouter();
   const [numberOfPeople, setNumberOfPeople] = useState(2);
-  const [selectedLocation, setSelectedLocation] = useState('Umeå');
+  const [address, setAddress] = useState('');
+  const [isValidating, setIsValidating] = useState(false);
 
   const handleNext = () => {
+    if (!address.trim()) {
+      Alert.alert('Adress saknas', 'Vänligen ange din adress för att fortsätta');
+      return;
+    }
+
+    setIsValidating(true);
+    
+    // Försök geocoda adressen
+    const location = geocodeAddress(address);
+    
+    if (!location) {
+      setIsValidating(false);
+      Alert.alert(
+        'Okänd adress', 
+        'Vi kunde inte hitta butiker nära den adressen. Försök med en adress i Umeå eller Bygdeå.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    setIsValidating(false);
+    
     router.push({
       pathname: '/onboarding/step2',
       params: { 
         numberOfPeople: numberOfPeople.toString(),
-        location: selectedLocation
+        address: address,
+        userLat: location.lat.toString(),
+        userLng: location.lng.toString(),
+        city: location.city
       }
     });
   };
@@ -34,34 +56,45 @@ export default function OnboardingStep1() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <Text style={styles.title}>Välkommen!</Text>
-          <Text style={styles.subtitle}>Låt oss komma igång</Text>
+          <Text style={styles.subtitle}>Låt oss komma igång med din veckomatsedel</Text>
         </View>
 
-        {/* Location Selector */}
+        {/* Address Input */}
         <Card style={styles.card}>
           <View style={styles.iconCircle}>
             <Ionicons name="location" size={40} color={colors.secondary} />
           </View>
-          <Text style={styles.cardTitle}>Var bor du?</Text>
-          <View style={styles.locationGrid}>
-            {LOCATIONS.map((loc) => (
-              <TouchableOpacity
-                key={loc.name}
-                style={[
-                  styles.locationButton,
-                  selectedLocation === loc.name && styles.locationButtonSelected
-                ]}
-                onPress={() => setSelectedLocation(loc.name)}
-              >
-                <Text style={[
-                  styles.locationText,
-                  selectedLocation === loc.name && styles.locationTextSelected
-                ]}>
-                  {loc.name}
-                </Text>
-                <Text style={styles.locationRegion}>{loc.region}</Text>
-              </TouchableOpacity>
-            ))}
+          <Text style={styles.cardTitle}>Din adress</Text>
+          <Text style={styles.cardDescription}>
+            Vi använder din adress för att hitta butiker i närheten
+          </Text>
+          
+          <View style={styles.inputContainer}>
+            <Ionicons name="home-outline" size={20} color={colors.textLight} style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="T.ex. Storgatan 12, Umeå"
+              value={address}
+              onChangeText={setAddress}
+              autoCapitalize="words"
+              returnKeyType="done"
+            />
+          </View>
+          
+          <View style={styles.exampleAddresses}>
+            <Text style={styles.exampleTitle}>Exempel:</Text>
+            <TouchableOpacity 
+              style={styles.exampleChip}
+              onPress={() => setAddress('Ersboda Centrum, Umeå')}
+            >
+              <Text style={styles.exampleText}>Ersboda Centrum, Umeå</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.exampleChip}
+              onPress={() => setAddress('Storgatan, Bygdeå')}
+            >
+              <Text style={styles.exampleText}>Storgatan, Bygdeå</Text>
+            </TouchableOpacity>
           </View>
         </Card>
 
@@ -97,7 +130,7 @@ export default function OnboardingStep1() {
         <View style={styles.infoBox}>
           <Ionicons name="information-circle-outline" size={20} color={colors.primary} />
           <Text style={styles.infoText}>
-            Vi visar butiker nära {selectedLocation} och anpassar portionsstorlekarna efter {numberOfPeople} {numberOfPeople === 1 ? 'person' : 'personer'}
+            Vi visar butiker i närheten och anpassar portionerna efter {numberOfPeople} {numberOfPeople === 1 ? 'person' : 'personer'}
           </Text>
         </View>
       </ScrollView>
@@ -108,7 +141,12 @@ export default function OnboardingStep1() {
           <View style={styles.dot} />
           <View style={styles.dot} />
         </View>
-        <Button title="Nästa" onPress={handleNext} />
+        <Button 
+          title="Hitta butiker" 
+          onPress={handleNext}
+          loading={isValidating}
+          disabled={!address.trim()}
+        />
       </View>
     </SafeAreaView>
   );
@@ -133,8 +171,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: colors.textLight,
+    lineHeight: 24,
   },
   card: {
     marginVertical: 12,
@@ -153,40 +192,52 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 16,
+    marginBottom: 8,
     textAlign: 'center',
   },
-  locationGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
+  cardDescription: {
+    fontSize: 14,
+    color: colors.textLight,
+    textAlign: 'center',
+    marginBottom: 16,
   },
-  locationButton: {
-    flex: 1,
-    minWidth: '45%',
-    padding: 16,
-    borderRadius: 12,
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 2,
     borderColor: colors.border,
+    borderRadius: 12,
+    paddingHorizontal: 16,
     backgroundColor: colors.background,
-    alignItems: 'center',
   },
-  locationButtonSelected: {
-    borderColor: colors.secondary,
-    backgroundColor: colors.secondaryLight + '20',
+  inputIcon: {
+    marginRight: 12,
   },
-  locationText: {
+  input: {
+    flex: 1,
+    paddingVertical: 16,
     fontSize: 16,
-    fontWeight: '600',
+    color: colors.text,
+  },
+  exampleAddresses: {
+    marginTop: 16,
+    gap: 8,
+  },
+  exampleTitle: {
+    fontSize: 12,
     color: colors.textLight,
     marginBottom: 4,
   },
-  locationTextSelected: {
-    color: colors.text,
+  exampleChip: {
+    backgroundColor: colors.secondaryLight + '20',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
   },
-  locationRegion: {
-    fontSize: 12,
-    color: colors.textLight,
+  exampleText: {
+    fontSize: 13,
+    color: colors.text,
   },
   counterContainer: {
     alignItems: 'center',

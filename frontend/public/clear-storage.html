@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rensa App Data</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            background: #FF9B8A;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #E8856F;
+        }
+        .success {
+            background: #A8D5BA;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔄 Återställ Veckomatsedel App</h1>
+    <p>Klicka på knappen nedan för att rensa all sparad data och börja om från början.</p>
+    
+    <button onclick="clearStorage()">Rensa All Data</button>
+    <button onclick="window.location.reload()">Ladda Om Sidan</button>
+    
+    <div class="success" id="success">
+        ✅ All data raderad! Ladda om sidan för att börja om.
+    </div>
+
+    <script>
+        function clearStorage() {
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Rensa alla cookies
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+            
+            document.getElementById('success').style.display = 'block';
+            
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

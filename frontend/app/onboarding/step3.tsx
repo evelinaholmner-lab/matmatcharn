@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -7,8 +7,9 @@ import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { colors } from '../utils/colors';
 import { useAppStore } from '../store';
-import { MealType, Store, DietaryPreference, Allergen } from '../types';
+import { MealType, DietaryPreference, Allergen } from '../types';
 import { Ionicons } from '@expo/vector-icons';
+import { findNearbyStores, StoreLocation } from '../data/stores';
 
 const MEAL_TYPES: { label: string; value: MealType; icon: string }[] = [
   { label: 'Frukost', value: 'frukost', icon: 'sunny' },
@@ -17,11 +18,11 @@ const MEAL_TYPES: { label: string; value: MealType; icon: string }[] = [
   { label: 'Mellanmål', value: 'mellanmål', icon: 'cafe' },
 ];
 
-const STORES: { label: string; value: Store; color: string }[] = [
-  { label: 'ICA', value: 'ICA', color: '#E3000F' },
-  { label: 'Coop', value: 'Coop', color: '#00A94F' },
-  { label: 'Willys', value: 'Willys', color: '#FF6B00' },
-];
+const STORE_COLORS: Record<string, string> = {
+  'ICA': '#E3000F',
+  'Coop': '#00A94F',
+  'Willys': '#FF6B00',
+};
 
 export default function OnboardingStep3() {
   const router = useRouter();
@@ -29,10 +30,24 @@ export default function OnboardingStep3() {
   const { setUserProfile } = useAppStore();
   
   const [selectedMeals, setSelectedMeals] = useState<MealType[]>(['lunch', 'middag']);
-  const [selectedStores, setSelectedStores] = useState<Store[]>(['ICA']);
+  const [selectedStores, setSelectedStores] = useState<string[]>([]);
+  const [nearbyStores, setNearbyStores] = useState<Array<StoreLocation & { distance: number }>>([]);
   const [wantsMealPrep, setWantsMealPrep] = useState(false);
   const [mealPrepPortions, setMealPrepPortions] = useState(2);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Hitta närliggande butiker när komponenten laddar
+  useEffect(() => {
+    const userLat = parseFloat(params.userLat as string);
+    const userLng = parseFloat(params.userLng as string);
+    const stores = findNearbyStores(userLat, userLng, 15); // 15 km radie
+    setNearbyStores(stores);
+    
+    // Förvalda de 2 närmaste butikerna
+    if (stores.length > 0) {
+      setSelectedStores([stores[0].name, stores.length > 1 ? stores[1].name : stores[0].name]);
+    }
+  }, [params.userLat, params.userLng]);
 
   const toggleMeal = (meal: MealType) => {
     setSelectedMeals(prev => 
@@ -42,15 +57,19 @@ export default function OnboardingStep3() {
     );
   };
 
-  const toggleStore = (store: Store) => {
+  const toggleStore = (storeName: string) => {
     setSelectedStores(prev => {
-      if (prev.includes(store)) {
+      if (prev.includes(storeName)) {
         // Minst en butik måste vara vald
         if (prev.length === 1) return prev;
-        return prev.filter(s => s !== store);
+        return prev.filter(s => s !== storeName);
       }
-      return [...prev, store];
+      return [...prev, storeName];
     });
+  };
+
+  const handleBack = () => {
+    router.back();
   };
 
   const handleFinish = async () => {
@@ -63,14 +82,21 @@ export default function OnboardingStep3() {
     const numberOfPeople = parseInt(params.numberOfPeople as string);
     const dietaryPreferences = JSON.parse(params.dietaryPreferences as string) as DietaryPreference[];
     const allergies = JSON.parse(params.allergies as string) as Allergen[];
+    const address = params.address as string;
+
+    // Konvertera specifika butiksnamn till kategorier för kampanjer
+    const storeCategories = selectedStores.map(storeName => {
+      const store = nearbyStores.find(s => s.name === storeName);
+      return store?.category;
+    }).filter((cat): cat is 'ICA' | 'Coop' | 'Willys' => cat !== undefined);
 
     const profile = {
       numberOfPeople,
       dietaryPreferences,
       allergies,
-      location: 'Sverige',
+      location: address,
       selectedMeals,
-      selectedStores,
+      selectedStores: storeCategories,
       wantsMealPrep,
       mealPrepPortions,
       onboardingCompleted: true,
@@ -80,10 +106,6 @@ export default function OnboardingStep3() {
     
     // Navigera till huvudvy
     router.replace('/weekly-plan');
-  };
-
-  const handleBack = () => {
-    router.back();
   };
 
   return (
@@ -163,35 +185,64 @@ export default function OnboardingStep3() {
         </Card>
 
         <Card>
-          <Text style={styles.sectionTitle}>Vilka butiker handlar ni i?</Text>
+          <View style={styles.storesHeader}>
+            <View>
+              <Text style={styles.sectionTitle}>Butiker nära dig</Text>
+              <Text style={styles.storesSubtitle}>
+                Hittade {nearbyStores.length} butiker nära {params.city}
+              </Text>
+            </View>
+            <Ionicons name="location" size={24} color={colors.secondary} />
+          </View>
+          
           <View style={styles.storesContainer}>
-            {STORES.map((store) => (
-              <TouchableOpacity
-                key={store.value}
-                style={[
-                  styles.storeOption,
-                  selectedStores.includes(store.value) && styles.storeOptionSelected
-                ]}
-                onPress={() => toggleStore(store.value)}
-              >
-                <View style={[styles.storeIconCircle, { backgroundColor: store.color + '20' }]}>
-                  <Ionicons 
-                    name="storefront" 
-                    size={24} 
-                    color={store.color} 
-                  />
-                </View>
-                <Text style={[
-                  styles.storeOptionText,
-                  selectedStores.includes(store.value) && styles.storeOptionTextSelected
-                ]}>
-                  {store.label}
+            {nearbyStores.length === 0 ? (
+              <View style={styles.emptyStores}>
+                <Ionicons name="information-circle-outline" size={40} color={colors.textLight} />
+                <Text style={styles.emptyStoresText}>
+                  Inga butiker hittades i närheten
                 </Text>
-                {selectedStores.includes(store.value) && (
-                  <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
-                )}
-              </TouchableOpacity>
-            ))}
+              </View>
+            ) : (
+              nearbyStores.map((store, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.storeOption,
+                    selectedStores.includes(store.name) && styles.storeOptionSelected
+                  ]}
+                  onPress={() => toggleStore(store.name)}
+                >
+                  <View style={[
+                    styles.storeIconCircle, 
+                    { backgroundColor: STORE_COLORS[store.category] + '20' }
+                  ]}>
+                    <Ionicons 
+                      name="storefront" 
+                      size={24} 
+                      color={STORE_COLORS[store.category]} 
+                    />
+                  </View>
+                  <View style={styles.storeInfo}>
+                    <Text style={[
+                      styles.storeOptionText,
+                      selectedStores.includes(store.name) && styles.storeOptionTextSelected
+                    ]}>
+                      {store.name}
+                    </Text>
+                    <Text style={styles.storeDistance}>
+                      {store.distance < 1 
+                        ? `${Math.round(store.distance * 1000)} m` 
+                        : `${store.distance.toFixed(1)} km`} bort
+                    </Text>
+                    <Text style={styles.storeAddress}>{store.address}</Text>
+                  </View>
+                  {selectedStores.includes(store.name) && (
+                    <Ionicons name="checkmark-circle" size={24} color={colors.success} />
+                  )}
+                </TouchableOpacity>
+              ))
+            )}
           </View>
         </Card>
       </ScrollView>
@@ -322,8 +373,29 @@ const styles = StyleSheet.create({
     minWidth: 40,
     textAlign: 'center',
   },
+  storesHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  storesSubtitle: {
+    fontSize: 14,
+    color: colors.textLight,
+    marginTop: 4,
+  },
   storesContainer: {
     gap: 12,
+  },
+  emptyStores: {
+    padding: 32,
+    alignItems: 'center',
+  },
+  emptyStoresText: {
+    fontSize: 14,
+    color: colors.textLight,
+    textAlign: 'center',
+    marginTop: 12,
   },
   storeOption: {
     flexDirection: 'row',
@@ -346,15 +418,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  storeOptionText: {
+  storeInfo: {
     flex: 1,
+  },
+  storeOptionText: {
     fontSize: 16,
     color: colors.textLight,
     fontWeight: '500',
+    marginBottom: 2,
   },
   storeOptionTextSelected: {
     color: colors.text,
     fontWeight: '600',
+  },
+  storeDistance: {
+    fontSize: 13,
+    color: colors.secondary,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  storeAddress: {
+    fontSize: 12,
+    color: colors.textLight,
   },
   footer: {
     position: 'absolute',

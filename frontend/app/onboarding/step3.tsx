@@ -42,12 +42,15 @@ export default function OnboardingStep3() {
   useEffect(() => {
     const userLat = parseFloat(params.userLat as string);
     const userLng = parseFloat(params.userLng as string);
-    const stores = findNearbyStores(userLat, userLng, 15); // 15 km radie
-    setNearbyStores(stores);
+    const nearby = findNearbyStores(userLat, userLng, 15); // 15 km radie
+    const all = findNearbyStores(userLat, userLng, 100); // Alla butiker inom 100 km
     
-    // Förvalda de 2 närmaste butikerna
-    if (stores.length > 0) {
-      setSelectedStores([stores[0].name, stores.length > 1 ? stores[1].name : stores[0].name]);
+    setNearbyStores(nearby);
+    setAllStores(all);
+    
+    // Förvald de 2 närmaste butikerna
+    if (nearby.length > 0) {
+      setSelectedStores([nearby[0].name, nearby.length > 1 ? nearby[1].name : nearby[0].name]);
     }
   }, [params.userLat, params.userLng]);
 

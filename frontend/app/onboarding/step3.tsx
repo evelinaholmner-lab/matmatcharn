@@ -22,6 +22,7 @@ const STORE_COLORS: Record<string, string> = {
   'ICA': '#E3000F',
   'Coop': '#00A94F',
   'Willys': '#FF6B00',
+  'Lidl': '#0050AA',
 };
 
 export default function OnboardingStep3() {

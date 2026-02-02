@@ -63,13 +63,19 @@ export const useAppStore = create<AppState>((set, get) => ({
       });
     };
 
+    // Måltidsordning - frukost först
+    const mealTypeOrder: MealType[] = ['frukost', 'lunch', 'middag', 'mellanmål'];
+
     // Generera för 7 dagar
     for (let i = 0; i < 7; i++) {
       const date = addDays(weekStart, i);
       const meals: DayMeal[] = [];
 
-      // Lägg till måltider baserat på användarens val
-      userProfile.selectedMeals.forEach(mealType => {
+      // Lägg till måltider i rätt ordning
+      mealTypeOrder.forEach(mealType => {
+        // Kolla om användaren valt denna måltidstyp
+        if (!userProfile.selectedMeals.includes(mealType)) return;
+        
         const availableRecipes = filterRecipes(mealType);
         if (availableRecipes.length > 0) {
           // Välj slumpmässigt recept

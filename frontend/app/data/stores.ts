@@ -2,8 +2,6 @@
 export const storesByLocation: Record<string, string[]> = {
   'Umeå': ['ICA Maxi Umeå', 'Coop Forum Umeå', 'Willys Vasaplan', 'ICA Kvantum Ersboda'],
   'Bygdeå': ['ICA Nära Bygdeå', 'Coop Bygdeå'],
-  'Skellefteå': ['ICA Maxi Skellefteå', 'Coop Forum Skellefteå', 'Willys Skellefteå'],
-  'Lycksele': ['ICA Maxi Lycksele', 'Coop Lycksele', 'Willys Lycksele'],
 };
 
 // Mapping från specifika butiker till butikskategori för kampanjer

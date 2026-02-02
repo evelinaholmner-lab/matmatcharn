@@ -192,16 +192,36 @@ export default function OnboardingStep3() {
         <Card>
           <View style={styles.storesHeader}>
             <View>
-              <Text style={styles.sectionTitle}>Butiker nära dig</Text>
+              <Text style={styles.sectionTitle}>
+                {showAllStores ? 'Alla butiker' : 'Butiker nära dig'}
+              </Text>
               <Text style={styles.storesSubtitle}>
-                Hittade {nearbyStores.length} butiker nära {params.city}
+                {showAllStores 
+                  ? `Visar alla ${allStores.length} butiker`
+                  : `${nearbyStores.length} butiker inom 15 km från ${params.city}`
+                }
               </Text>
             </View>
             <Ionicons name="location" size={24} color={colors.secondary} />
           </View>
           
+          {/* Toggle knapp */}
+          <TouchableOpacity 
+            style={styles.toggleButton}
+            onPress={() => setShowAllStores(!showAllStores)}
+          >
+            <Ionicons 
+              name={showAllStores ? "navigate-circle" : "map"} 
+              size={20} 
+              color={colors.primary} 
+            />
+            <Text style={styles.toggleButtonText}>
+              {showAllStores ? 'Visa bara närliggande' : 'Se alla butiker på karta'}
+            </Text>
+          </TouchableOpacity>
+          
           <View style={styles.storesContainer}>
-            {nearbyStores.length === 0 ? (
+            {(showAllStores ? allStores : nearbyStores).length === 0 ? (
               <View style={styles.emptyStores}>
                 <Ionicons name="information-circle-outline" size={40} color={colors.textLight} />
                 <Text style={styles.emptyStoresText}>

@@ -279,34 +279,37 @@ export const findNearbyStores = (
 };
 
 // Mapping från specifika butiker till butikskategori för kampanjer
-export const storeToCategory: Record<string, 'ICA' | 'Coop' | 'Willys'> = {
+export const storeToCategory: Record<string, 'ICA' | 'Coop' | 'Willys' | 'Lidl'> = {
   // ICA butiker
-  'ICA Maxi Ersboda': 'ICA',
+  'ICA Maxi Strömpilen': 'ICA',
   'ICA Kvantum Ersboda': 'ICA',
+  'ICA Supermarket Vasaplan': 'ICA',
   'ICA Supermarket Östra Ersboda': 'ICA',
-  'ICA Supermarket Strömpilen': 'ICA',
   'ICA Nära Böleäng': 'ICA',
   'ICA Nära Tomtebo': 'ICA',
   'ICA Supermarket Teg': 'ICA',
   'ICA Nära Mariehem': 'ICA',
-  'ICA Kvantum Strömpilen': 'ICA',
   'ICA Supermarket Hörnett': 'ICA',
   'ICA Nära Bygdeå': 'ICA',
   'Hemköp Västra Esplanaden': 'ICA',
   
   // Coop butiker
-  'Coop Forum Umeå': 'Coop',
+  'Coop Forum Strömpilen': 'Coop',
   'Coop Extra Böleäng': 'Coop',
   'Coop Konsum Teg': 'Coop',
-  'Coop Extra Ålidhem': 'Coop',
+  'Coop Konsum Ålidhem': 'Coop',
   'Coop Konsum Haga': 'Coop',
   'Coop Konsum Mariehem': 'Coop',
   'Coop Extra Sandbacka': 'Coop',
-  'Coop Bygdeå': 'Coop',
   
   // Willys butiker
   'Willys Vasaplan': 'Willys',
   'Willys Ersboda': 'Willys',
   'Willys Strömpilen': 'Willys',
   'Willys+ Avion': 'Willys',
+  
+  // Lidl butiker
+  'Lidl Strömpilen': 'Lidl',
+  'Lidl Ersboda': 'Lidl',
+  'Lidl Böleäng': 'Lidl',
 };

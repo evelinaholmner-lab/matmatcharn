@@ -196,8 +196,22 @@ export const geocodeAddress = (address: string): { lat: number; lng: number; cit
       lowerAddress.includes('umea') ||
       lowerAddress.includes('ersboda') ||
       lowerAddress.includes('böleäng') ||
+      lowerAddress.includes('boleang') ||
       lowerAddress.includes('vasaplan') ||
-      lowerAddress.includes('östra')) {
+      lowerAddress.includes('vasa') ||
+      lowerAddress.includes('östra') ||
+      lowerAddress.includes('ostra') ||
+      lowerAddress.includes('strömpil') ||
+      lowerAddress.includes('strompil') ||
+      lowerAddress.includes('teg') ||
+      lowerAddress.includes('tomtebo') ||
+      lowerAddress.includes('mariehem') ||
+      lowerAddress.includes('hörnett') ||
+      lowerAddress.includes('hornett') ||
+      lowerAddress.includes('ålidhem') ||
+      lowerAddress.includes('alidhem') ||
+      lowerAddress.includes('haga') ||
+      lowerAddress.includes('sandbacka')) {
     return {
       lat: 63.8258 + (Math.random() - 0.5) * 0.02, // Varierar lite
       lng: 20.2630 + (Math.random() - 0.5) * 0.02,
@@ -214,7 +228,12 @@ export const geocodeAddress = (address: string): { lat: number; lng: number; cit
     };
   }
   
-  return null;
+  // Om ingen matchning, defaulta till Umeå centrum
+  return {
+    lat: 63.8258,
+    lng: 20.2630,
+    city: 'Umeå'
+  };
 };
 
 // Beräkna avstånd mellan två koordinater (Haversine formula)

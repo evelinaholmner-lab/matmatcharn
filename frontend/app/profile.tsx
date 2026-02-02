@@ -24,7 +24,7 @@ export default function Profile() {
   const handleResetApp = () => {
     Alert.alert(
       'Återställ app',
-      'Vill du verkligen ta bort all data och börja om?',
+      'Vill du verkligen ta bort all data och börja om från början?',
       [
         { text: 'Avbryt', style: 'cancel' },
         {
@@ -32,9 +32,40 @@ export default function Profile() {
           style: 'destructive',
           onPress: async () => {
             await AsyncStorage.clear();
-            router.replace('/onboarding/step1');
+            // För web: rensa localStorage också
+            if (typeof window !== 'undefined' && window.localStorage) {
+              window.localStorage.clear();
+            }
+            router.replace('/');
           },
         },
+      ]
+    );
+  };
+
+  const handleEditProfile = () => {
+    Alert.alert(
+      'Redigera profil',
+      'Välj vad du vill ändra',
+      [
+        { 
+          text: 'Ändra adress & butiker',
+          onPress: () => router.push('/onboarding/step1')
+        },
+        { 
+          text: 'Ändra kostpreferenser',
+          onPress: () => router.push({
+            pathname: '/onboarding/step2',
+            params: {
+              numberOfPeople: userProfile.numberOfPeople.toString(),
+              address: userProfile.location,
+              userLat: '63.8258',
+              userLng: '20.2630',
+              city: 'Umeå'
+            }
+          })
+        },
+        { text: 'Avbryt', style: 'cancel' }
       ]
     );
   };

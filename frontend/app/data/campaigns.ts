@@ -52,6 +52,16 @@ export const campaigns: Campaign[] = [
   { store: 'Willys', ingredient: 'Grädde', discount: 25, validUntil: week6End },
   { store: 'Willys', ingredient: 'Spaghetti', discount: 20, validUntil: week6End },
 
+  // Lidl - Vecka 6
+  { store: 'Lidl', ingredient: 'Kycklingfilé', discount: 40, validUntil: week6End },
+  { store: 'Lidl', ingredient: 'Potatis', discount: 30, validUntil: week6End },
+  { store: 'Lidl', ingredient: 'Mjölk', discount: 25, validUntil: week6End },
+  { store: 'Lidl', ingredient: 'Ägg', discount: 35, validUntil: week6End },
+  { store: 'Lidl', ingredient: 'Bröd', discount: 30, validUntil: week6End },
+  { store: 'Lidl', ingredient: 'Ost', discount: 35, validUntil: week6End },
+  { store: 'Lidl', ingredient: 'Yoghurt', discount: 30, validUntil: week6End },
+  { store: 'Lidl', ingredient: 'Pasta', discount: 25, validUntil: week6End },
+
   // ==================== VECKA 7 (10-16 februari 2025) ====================
   // ICA - Vecka 7
   { store: 'ICA', ingredient: 'Torsk', discount: 35, validUntil: week7End },

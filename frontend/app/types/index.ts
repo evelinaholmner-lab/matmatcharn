@@ -3,7 +3,7 @@
 export type DietaryPreference = 'vegetariskt' | 'veganskt' | 'barnvänlig' | 'keto' | 'proteinrik';
 export type Allergen = 'nöt' | 'ägg' | 'laktos' | 'mjölkprotein' | 'gluten';
 export type MealType = 'frukost' | 'lunch' | 'middag' | 'mellanmål';
-export type Store = 'ICA' | 'Coop' | 'Willys';
+export type Store = 'ICA' | 'Coop' | 'Willys' | 'Lidl';
 
 // Specific store names
 export type SpecificStore = 

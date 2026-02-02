@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,58 +16,29 @@ export default function Profile() {
 
   const handleRegenerateWeek = () => {
     generateWeeklyMealPlan();
-    Alert.alert('Uppdaterat!', 'En ny veckomatsedel har genererats', [
-      { text: 'OK', onPress: () => router.back() }
-    ]);
+    if (Platform.OS === 'web') {
+      alert('En ny veckomatsedel har genererats!');
+      router.back();
+    }
   };
 
-  const handleResetApp = () => {
-    Alert.alert(
-      'Återställ app',
-      'Vill du verkligen ta bort all data och börja om från början?',
-      [
-        { text: 'Avbryt', style: 'cancel' },
-        {
-          text: 'Återställ',
-          style: 'destructive',
-          onPress: async () => {
-            await AsyncStorage.clear();
-            // För web: rensa localStorage också
-            if (typeof window !== 'undefined' && window.localStorage) {
-              window.localStorage.clear();
-            }
-            router.replace('/');
-          },
-        },
-      ]
-    );
+  const handleResetApp = async () => {
+    const confirmed = Platform.OS === 'web' 
+      ? window.confirm('Vill du verkligen ta bort all data och börja om från början?')
+      : true;
+    
+    if (confirmed) {
+      await AsyncStorage.clear();
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.clear();
+      }
+      router.replace('/');
+    }
   };
 
   const handleEditProfile = () => {
-    Alert.alert(
-      'Redigera profil',
-      'Välj vad du vill ändra',
-      [
-        { 
-          text: 'Ändra adress & butiker',
-          onPress: () => router.push('/onboarding/step1')
-        },
-        { 
-          text: 'Ändra kostpreferenser',
-          onPress: () => router.push({
-            pathname: '/onboarding/step2',
-            params: {
-              numberOfPeople: userProfile.numberOfPeople.toString(),
-              address: userProfile.location,
-              userLat: '63.8258',
-              userLng: '20.2630',
-              city: 'Umeå'
-            }
-          })
-        },
-        { text: 'Avbryt', style: 'cancel' }
-      ]
-    );
+    // Navigera direkt till onboarding step 1
+    router.push('/onboarding/step1');
   };
 
   if (!userProfile) {

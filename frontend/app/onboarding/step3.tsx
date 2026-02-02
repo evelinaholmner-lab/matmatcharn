@@ -229,7 +229,7 @@ export default function OnboardingStep3() {
                 </Text>
               </View>
             ) : (
-              nearbyStores.map((store, index) => (
+              (showAllStores ? allStores : nearbyStores).map((store, index) => (
                 <TouchableOpacity
                   key={index}
                   style={[

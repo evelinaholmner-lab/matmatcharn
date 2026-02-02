@@ -176,6 +176,11 @@ export default function Profile() {
         {/* Actions */}
         <View style={styles.actionsContainer}>
           <Button 
+            title="Redigera profil" 
+            onPress={handleEditProfile}
+            variant="secondary"
+          />
+          <Button 
             title="Generera ny vecka" 
             onPress={handleRegenerateWeek}
             variant="secondary"

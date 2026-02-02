@@ -10,10 +10,10 @@ export interface StoreLocation {
 export const storeLocations: StoreLocation[] = [
   // Umeå butiker - ICA
   {
-    name: 'ICA Maxi Ersboda',
-    address: 'Ersboda Centrum, Umeå',
-    lat: 63.8258,
-    lng: 20.2630,
+    name: 'ICA Maxi Strömpilen',
+    address: 'Strömpilsplatsen 1, Umeå',
+    lat: 63.8160,
+    lng: 20.2820,
     category: 'ICA'
   },
   {
@@ -24,17 +24,17 @@ export const storeLocations: StoreLocation[] = [
     category: 'ICA'
   },
   {
+    name: 'ICA Supermarket Vasaplan',
+    address: 'Vasagatan 16, Umeå',
+    lat: 63.8258,
+    lng: 20.2630,
+    category: 'ICA'
+  },
+  {
     name: 'ICA Supermarket Östra Ersboda',
     address: 'Järnvägsallén 32, Umeå',
     lat: 63.8300,
     lng: 20.2700,
-    category: 'ICA'
-  },
-  {
-    name: 'ICA Supermarket Strömpilen',
-    address: 'Strömpilsgatan 18, Umeå',
-    lat: 63.8150,
-    lng: 20.2800,
     category: 'ICA'
   },
   {
@@ -66,13 +66,6 @@ export const storeLocations: StoreLocation[] = [
     category: 'ICA'
   },
   {
-    name: 'ICA Kvantum Strömpilen',
-    address: 'Strömpilsplatsen 1, Umeå',
-    lat: 63.8160,
-    lng: 20.2820,
-    category: 'ICA'
-  },
-  {
     name: 'ICA Supermarket Hörnett',
     address: 'Universitetsområdet, Umeå',
     lat: 63.8200,
@@ -82,10 +75,10 @@ export const storeLocations: StoreLocation[] = [
   
   // Umeå butiker - Coop
   {
-    name: 'Coop Forum Umeå',
-    address: 'Vasagatan 5, Umeå',
-    lat: 63.8258,
-    lng: 20.2630,
+    name: 'Coop Forum Strömpilen',
+    address: 'Strömpilsgatan 15, Umeå',
+    lat: 63.8170,
+    lng: 20.2850,
     category: 'Coop'
   },
   {
@@ -103,7 +96,7 @@ export const storeLocations: StoreLocation[] = [
     category: 'Coop'
   },
   {
-    name: 'Coop Extra Ålidhem',
+    name: 'Coop Konsum Ålidhem',
     address: 'Ålidhemsgatan 31, Umeå',
     lat: 63.8100,
     lng: 20.3200,
@@ -161,6 +154,29 @@ export const storeLocations: StoreLocation[] = [
     category: 'Willys'
   },
   
+  // Umeå butiker - Lidl
+  {
+    name: 'Lidl Strömpilen',
+    address: 'Strömpilsgatan 25, Umeå',
+    lat: 63.8165,
+    lng: 20.2840,
+    category: 'Lidl'
+  },
+  {
+    name: 'Lidl Ersboda',
+    address: 'Ersmarksgatan 15, Umeå',
+    lat: 63.8275,
+    lng: 20.2610,
+    category: 'Lidl'
+  },
+  {
+    name: 'Lidl Böleäng',
+    address: 'Böleängsgatan 10, Umeå',
+    lat: 63.8145,
+    lng: 20.2590,
+    category: 'Lidl'
+  },
+  
   // Hemköp Umeå
   {
     name: 'Hemköp Västra Esplanaden',
@@ -170,20 +186,13 @@ export const storeLocations: StoreLocation[] = [
     category: 'ICA'
   },
   
-  // Bygdeå butiker
+  // Bygdeå butiker - endast ICA
   {
     name: 'ICA Nära Bygdeå',
     address: 'Storgatan 12, Bygdeå',
     lat: 63.9500,
     lng: 19.9700,
     category: 'ICA'
-  },
-  {
-    name: 'Coop Bygdeå',
-    address: 'Centrumvägen 5, Bygdeå',
-    lat: 63.9510,
-    lng: 19.9720,
-    category: 'Coop'
   },
 ];
 

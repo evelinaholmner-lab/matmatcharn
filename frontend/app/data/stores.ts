@@ -4,7 +4,7 @@ export interface StoreLocation {
   address: string;
   lat: number;
   lng: number;
-  category: 'ICA' | 'Coop' | 'Willys';
+  category: 'ICA' | 'Coop' | 'Willys' | 'Lidl';
 }
 
 export const storeLocations: StoreLocation[] = [

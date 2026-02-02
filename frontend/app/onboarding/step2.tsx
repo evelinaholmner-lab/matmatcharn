@@ -52,7 +52,10 @@ export default function OnboardingStep2() {
       pathname: '/onboarding/step3',
       params: {
         numberOfPeople: params.numberOfPeople,
-        location: params.location,
+        address: params.address,
+        userLat: params.userLat,
+        userLng: params.userLng,
+        city: params.city,
         dietaryPreferences: JSON.stringify(selectedPreferences),
         allergies: JSON.stringify(selectedAllergies),
       }

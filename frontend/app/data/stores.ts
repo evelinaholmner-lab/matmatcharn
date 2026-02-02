@@ -8,191 +8,133 @@ export interface StoreLocation {
 }
 
 export const storeLocations: StoreLocation[] = [
-  // Umeå butiker - ICA
+  // ========== ICA Butiker ==========
   {
-    name: 'ICA Maxi Strömpilen',
-    address: 'Strömpilsplatsen 1, Umeå',
+    name: 'ICA Maxi Supermarket Umeå',
+    address: 'Strömpilsplatsen 41, 907 43 Umeå',
     lat: 63.8160,
     lng: 20.2820,
     category: 'ICA'
   },
   {
-    name: 'ICA Kvantum Ersboda',
-    address: 'Ersmarksgatan 20, Umeå',
-    lat: 63.8280,
-    lng: 20.2600,
-    category: 'ICA'
-  },
-  {
-    name: 'ICA Supermarket Vasaplan',
-    address: 'Vasagatan 16, Umeå',
+    name: 'ICA Supermarket City',
+    address: 'Renmarkstorget 5 A, 903 26 Umeå',
     lat: 63.8258,
     lng: 20.2630,
     category: 'ICA'
   },
   {
-    name: 'ICA Supermarket Östra Ersboda',
-    address: 'Järnvägsallén 32, Umeå',
-    lat: 63.8300,
-    lng: 20.2700,
-    category: 'ICA'
-  },
-  {
-    name: 'ICA Nära Böleäng',
-    address: 'Böleängsgatan 2, Umeå',
-    lat: 63.8150,
-    lng: 20.2580,
-    category: 'ICA'
-  },
-  {
-    name: 'ICA Nära Tomtebo',
-    address: 'Tomtebovägen 10, Umeå',
-    lat: 63.8120,
-    lng: 20.2450,
+    name: 'ICA Supermarket Ålidhem',
+    address: 'Ålidhems Centrum/Examensvägen, 907 30 Umeå',
+    lat: 63.8100,
+    lng: 20.3150,
     category: 'ICA'
   },
   {
     name: 'ICA Supermarket Teg',
-    address: 'Tegsgatan 2, Umeå',
+    address: 'Verkstadsgatan 1, 904 32 Umeå',
     lat: 63.8050,
-    lng: 20.2350,
-    category: 'ICA'
-  },
-  {
-    name: 'ICA Nära Mariehem',
-    address: 'Mariehemsgatan 5, Umeå',
-    lat: 63.8200,
     lng: 20.2400,
     category: 'ICA'
   },
   {
-    name: 'ICA Supermarket Hörnett',
-    address: 'Universitetsområdet, Umeå',
-    lat: 63.8200,
-    lng: 20.3080,
+    name: 'ICA Supermarket Böleäng',
+    address: 'Fruktvägen 1, 904 36 Umeå',
+    lat: 63.8020,
+    lng: 20.2180,
+    category: 'ICA'
+  },
+  {
+    name: 'ICA Kvantum Mariehem',
+    address: 'Mariehemsvägen 8A, 906 54 Umeå',
+    lat: 63.8320,
+    lng: 20.2420,
+    category: 'ICA'
+  },
+  {
+    name: 'ICA Kvantum Kronoparken',
+    address: 'Kronoskogsvägen 18, 903 61 Umeå',
+    lat: 63.8380,
+    lng: 20.2300,
     category: 'ICA'
   },
   
-  // Umeå butiker - Coop
+  // ========== ICA Nära (Närlivs) ==========
   {
-    name: 'Coop Forum Strömpilen',
-    address: 'Strömpilsgatan 15, Umeå',
-    lat: 63.8170,
-    lng: 20.2850,
+    name: 'ICA Nära Bågen',
+    address: 'Järnvägstorget, 903 28 Umeå',
+    lat: 63.8245,
+    lng: 20.2610,
+    category: 'ICA'
+  },
+  {
+    name: 'ICA Nära Berghem',
+    address: 'Axtorpsvägen 30, 903 37 Umeå',
+    lat: 63.8350,
+    lng: 20.2500,
+    category: 'ICA'
+  },
+  
+  // ========== Coop Butiker ==========
+  {
+    name: 'Coop City Umeå',
+    address: 'Kungsgatan 54, 903 26 Umeå',
+    lat: 63.8260,
+    lng: 20.2610,
     category: 'Coop'
   },
   {
-    name: 'Coop Extra Böleäng',
-    address: 'Böleängsgatan 2, Umeå',
-    lat: 63.8150,
-    lng: 20.2580,
+    name: 'Stora Coop Tomtebo',
+    address: 'Mineralvägen 7, 907 50 Umeå',
+    lat: 63.8080,
+    lng: 20.2900,
     category: 'Coop'
   },
   {
-    name: 'Coop Konsum Teg',
-    address: 'Tegsbron 5, Umeå',
-    lat: 63.8070,
+    name: 'Stora Coop Ersboda',
+    address: 'Formvägen 4, 906 21 Umeå',
+    lat: 63.8400,
+    lng: 20.2650,
+    category: 'Coop'
+  },
+  {
+    name: 'Coop Nära Haga',
+    address: 'Östra Kyrkogatan 70, 903 43 Umeå',
+    lat: 63.8290,
+    lng: 20.2550,
+    category: 'Coop'
+  },
+  {
+    name: 'Coop Nära Tegsborg',
+    address: 'Tegsplan 3A, 904 20 Umeå',
+    lat: 63.8100,
+    lng: 20.2350,
+    category: 'Coop'
+  },
+  {
+    name: 'Coop Grisbacka',
+    address: 'Tallparksvägen 2A, 903 54 Umeå',
+    lat: 63.8360,
     lng: 20.2380,
     category: 'Coop'
   },
+  
+  // ========== Willys Butiker ==========
   {
-    name: 'Coop Konsum Ålidhem',
-    address: 'Ålidhemsgatan 31, Umeå',
-    lat: 63.8100,
-    lng: 20.3200,
-    category: 'Coop'
-  },
-  {
-    name: 'Coop Konsum Haga',
-    address: 'Hagagatan 8, Umeå',
-    lat: 63.8280,
-    lng: 20.2500,
-    category: 'Coop'
-  },
-  {
-    name: 'Coop Konsum Mariehem',
-    address: 'Mariehemsgatan 10, Umeå',
-    lat: 63.8210,
+    name: 'Willys Umeå Syd',
+    address: 'Marknadsgatan 5, 904 22 Umeå',
+    lat: 63.8030,
     lng: 20.2420,
-    category: 'Coop'
-  },
-  {
-    name: 'Coop Extra Sandbacka',
-    address: 'Sandbackagatan 1, Umeå',
-    lat: 63.8000,
-    lng: 20.2200,
-    category: 'Coop'
-  },
-  
-  // Umeå butiker - Willys
-  {
-    name: 'Willys Vasaplan',
-    address: 'Vasagatan 14, Umeå',
-    lat: 63.8240,
-    lng: 20.2650,
-    category: 'Willys'
-  },
-  {
-    name: 'Willys Ersboda',
-    address: 'Ersbodavägen 10, Umeå',
-    lat: 63.8270,
-    lng: 20.2620,
-    category: 'Willys'
-  },
-  {
-    name: 'Willys Strömpilen',
-    address: 'Strömpilsgatan 20, Umeå',
-    lat: 63.8170,
-    lng: 20.2850,
-    category: 'Willys'
-  },
-  {
-    name: 'Willys+ Avion',
-    address: 'Flygfältsgatan 3, Umeå',
-    lat: 63.7950,
-    lng: 20.2850,
     category: 'Willys'
   },
   
-  // Umeå butiker - Lidl
+  // ========== Lidl Butiker ==========
   {
-    name: 'Lidl Strömpilen',
-    address: 'Strömpilsgatan 25, Umeå',
-    lat: 63.8165,
-    lng: 20.2840,
+    name: 'Lidl Umeå',
+    address: 'Examensvägen 1, 907 30 Umeå',
+    lat: 63.8095,
+    lng: 20.3140,
     category: 'Lidl'
-  },
-  {
-    name: 'Lidl Ersboda',
-    address: 'Ersmarksgatan 15, Umeå',
-    lat: 63.8275,
-    lng: 20.2610,
-    category: 'Lidl'
-  },
-  {
-    name: 'Lidl Böleäng',
-    address: 'Böleängsgatan 10, Umeå',
-    lat: 63.8145,
-    lng: 20.2590,
-    category: 'Lidl'
-  },
-  
-  // Hemköp Umeå
-  {
-    name: 'Hemköp Västra Esplanaden',
-    address: 'Västra Esplanaden 5, Umeå',
-    lat: 63.8250,
-    lng: 20.2580,
-    category: 'ICA'
-  },
-  
-  // Bygdeå butiker - endast ICA
-  {
-    name: 'ICA Nära Bygdeå',
-    address: 'Storgatan 12, Bygdeå',
-    lat: 63.9500,
-    lng: 19.9700,
-    category: 'ICA'
   },
 ];
 
@@ -200,49 +142,56 @@ export const storeLocations: StoreLocation[] = [
 export const geocodeAddress = (address: string): { lat: number; lng: number; city: string } | null => {
   const lowerAddress = address.toLowerCase();
   
-  // Umeå-området (centrum och närområden)
+  // Specifika områden i Umeå med bättre koordinater
+  if (lowerAddress.includes('ålidhem') || lowerAddress.includes('alidhem')) {
+    return { lat: 63.8100, lng: 20.3150, city: 'Umeå' };
+  }
+  if (lowerAddress.includes('ersboda')) {
+    return { lat: 63.8400, lng: 20.2650, city: 'Umeå' };
+  }
+  if (lowerAddress.includes('mariehem')) {
+    return { lat: 63.8320, lng: 20.2420, city: 'Umeå' };
+  }
+  if (lowerAddress.includes('teg')) {
+    return { lat: 63.8050, lng: 20.2400, city: 'Umeå' };
+  }
+  if (lowerAddress.includes('böleäng') || lowerAddress.includes('boleang')) {
+    return { lat: 63.8020, lng: 20.2180, city: 'Umeå' };
+  }
+  if (lowerAddress.includes('haga')) {
+    return { lat: 63.8290, lng: 20.2550, city: 'Umeå' };
+  }
+  if (lowerAddress.includes('tomtebo')) {
+    return { lat: 63.8080, lng: 20.2900, city: 'Umeå' };
+  }
+  if (lowerAddress.includes('kronopark')) {
+    return { lat: 63.8380, lng: 20.2300, city: 'Umeå' };
+  }
+  if (lowerAddress.includes('grisbacka')) {
+    return { lat: 63.8360, lng: 20.2380, city: 'Umeå' };
+  }
+  if (lowerAddress.includes('berghem')) {
+    return { lat: 63.8350, lng: 20.2500, city: 'Umeå' };
+  }
+  
+  // Umeå-området generellt
   if (lowerAddress.includes('umeå') || 
       lowerAddress.includes('umea') ||
-      lowerAddress.includes('ersboda') ||
-      lowerAddress.includes('böleäng') ||
-      lowerAddress.includes('boleang') ||
+      lowerAddress.includes('renmarkstorget') ||
+      lowerAddress.includes('kungsgatan') ||
+      lowerAddress.includes('järnvägstorget') ||
       lowerAddress.includes('vasaplan') ||
-      lowerAddress.includes('vasa') ||
-      lowerAddress.includes('östra') ||
-      lowerAddress.includes('ostra') ||
-      lowerAddress.includes('strömpil') ||
-      lowerAddress.includes('strompil') ||
-      lowerAddress.includes('teg') ||
-      lowerAddress.includes('tomtebo') ||
-      lowerAddress.includes('mariehem') ||
-      lowerAddress.includes('hörnett') ||
-      lowerAddress.includes('hornett') ||
-      lowerAddress.includes('ålidhem') ||
-      lowerAddress.includes('alidhem') ||
-      lowerAddress.includes('haga') ||
-      lowerAddress.includes('sandbacka')) {
-    return {
-      lat: 63.8258 + (Math.random() - 0.5) * 0.02, // Varierar lite
-      lng: 20.2630 + (Math.random() - 0.5) * 0.02,
-      city: 'Umeå'
-    };
+      lowerAddress.includes('centrum')) {
+    return { lat: 63.8258, lng: 20.2630, city: 'Umeå' };
   }
   
   // Bygdeå
   if (lowerAddress.includes('bygdeå') || lowerAddress.includes('bygdea')) {
-    return {
-      lat: 63.9500 + (Math.random() - 0.5) * 0.01,
-      lng: 19.9700 + (Math.random() - 0.5) * 0.01,
-      city: 'Bygdeå'
-    };
+    return { lat: 63.9500, lng: 19.9700, city: 'Bygdeå' };
   }
   
   // Om ingen matchning, defaulta till Umeå centrum
-  return {
-    lat: 63.8258,
-    lng: 20.2630,
-    city: 'Umeå'
-  };
+  return { lat: 63.8258, lng: 20.2630, city: 'Umeå' };
 };
 
 // Beräkna avstånd mellan två koordinater (Haversine formula)
@@ -281,35 +230,27 @@ export const findNearbyStores = (
 // Mapping från specifika butiker till butikskategori för kampanjer
 export const storeToCategory: Record<string, 'ICA' | 'Coop' | 'Willys' | 'Lidl'> = {
   // ICA butiker
-  'ICA Maxi Strömpilen': 'ICA',
-  'ICA Kvantum Ersboda': 'ICA',
-  'ICA Supermarket Vasaplan': 'ICA',
-  'ICA Supermarket Östra Ersboda': 'ICA',
-  'ICA Nära Böleäng': 'ICA',
-  'ICA Nära Tomtebo': 'ICA',
+  'ICA Maxi Supermarket Umeå': 'ICA',
+  'ICA Supermarket City': 'ICA',
+  'ICA Supermarket Ålidhem': 'ICA',
   'ICA Supermarket Teg': 'ICA',
-  'ICA Nära Mariehem': 'ICA',
-  'ICA Supermarket Hörnett': 'ICA',
-  'ICA Nära Bygdeå': 'ICA',
-  'Hemköp Västra Esplanaden': 'ICA',
+  'ICA Supermarket Böleäng': 'ICA',
+  'ICA Kvantum Mariehem': 'ICA',
+  'ICA Kvantum Kronoparken': 'ICA',
+  'ICA Nära Bågen': 'ICA',
+  'ICA Nära Berghem': 'ICA',
   
   // Coop butiker
-  'Coop Forum Strömpilen': 'Coop',
-  'Coop Extra Böleäng': 'Coop',
-  'Coop Konsum Teg': 'Coop',
-  'Coop Konsum Ålidhem': 'Coop',
-  'Coop Konsum Haga': 'Coop',
-  'Coop Konsum Mariehem': 'Coop',
-  'Coop Extra Sandbacka': 'Coop',
+  'Coop City Umeå': 'Coop',
+  'Stora Coop Tomtebo': 'Coop',
+  'Stora Coop Ersboda': 'Coop',
+  'Coop Nära Haga': 'Coop',
+  'Coop Nära Tegsborg': 'Coop',
+  'Coop Grisbacka': 'Coop',
   
   // Willys butiker
-  'Willys Vasaplan': 'Willys',
-  'Willys Ersboda': 'Willys',
-  'Willys Strömpilen': 'Willys',
-  'Willys+ Avion': 'Willys',
+  'Willys Umeå Syd': 'Willys',
   
   // Lidl butiker
-  'Lidl Strömpilen': 'Lidl',
-  'Lidl Ersboda': 'Lidl',
-  'Lidl Böleäng': 'Lidl',
+  'Lidl Umeå': 'Lidl',
 };

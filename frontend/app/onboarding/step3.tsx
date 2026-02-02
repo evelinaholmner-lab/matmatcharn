@@ -32,6 +32,8 @@ export default function OnboardingStep3() {
   const [selectedMeals, setSelectedMeals] = useState<MealType[]>(['lunch', 'middag']);
   const [selectedStores, setSelectedStores] = useState<string[]>([]);
   const [nearbyStores, setNearbyStores] = useState<Array<StoreLocation & { distance: number }>>([]);
+  const [allStores, setAllStores] = useState<Array<StoreLocation & { distance: number }>>([]);
+  const [showAllStores, setShowAllStores] = useState(false);
   const [wantsMealPrep, setWantsMealPrep] = useState(false);
   const [mealPrepPortions, setMealPrepPortions] = useState(2);
   const [isSubmitting, setIsSubmitting] = useState(false);

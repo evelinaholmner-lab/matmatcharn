@@ -431,6 +431,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
+  mealImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    backgroundColor: colors.border,
+  },
   mealTypeIndicator: {
     width: 36,
     height: 36,

@@ -1,56 +1,49 @@
 import { Campaign, Store } from '../types';
 
-// Vecka 6: 3-9 februari 2025 (denna vecka)
-const week6Start = new Date('2025-02-03');
-const week6End = new Date('2025-02-09');
+// Vecka 6: 2-8 februari 2025 (denna vecka)
+const week6Start = new Date('2025-02-02');
+const week6End = new Date('2025-02-08');
 
-// Vecka 7: 10-16 februari 2025
-const week7Start = new Date('2025-02-10');
-const week7End = new Date('2025-02-16');
+// Vecka 7: 9-15 februari 2025
+const week7Start = new Date('2025-02-09');
+const week7End = new Date('2025-02-15');
 
-// Vecka 8: 17-23 februari 2025
-const week8Start = new Date('2025-02-17');
-const week8End = new Date('2025-02-23');
+// Vecka 8: 16-22 februari 2025
+const week8Start = new Date('2025-02-16');
+const week8End = new Date('2025-02-22');
 
 export const campaigns: Campaign[] = [
-  // ==================== VECKA 6 (3-9 februari 2025) ====================
-  // ICA - Vecka 6
-  { store: 'ICA', ingredient: 'Kycklingfilé', discount: 35, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Falukorv', discount: 25, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Mjölk', discount: 20, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Ägg', discount: 30, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Banan', discount: 20, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Tomat', discount: 35, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Havregryn', discount: 25, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Pasta', discount: 20, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Färskpotatis', discount: 30, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Yoghurt', discount: 25, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Smör', discount: 20, validUntil: week6End },
-  { store: 'ICA', ingredient: 'Apelsin', discount: 30, validUntil: week6End },
+  // ==================== VECKA 6 (2-8 februari 2025) ====================
+  
+  // ICA Supermarket - Vecka 6 (RIKTIGA erbjudanden)
+  { store: 'ICA', ingredient: 'Cheddar', discount: 35, validUntil: week6End },       // Riven Cheddar & Mozzarella 20 kr
+  { store: 'ICA', ingredient: 'Mozzarella', discount: 35, validUntil: week6End },    // Riven Cheddar & Mozzarella 20 kr
+  { store: 'ICA', ingredient: 'Tomat', discount: 30, validUntil: week6End },         // Tomater 25 kr/pk
+  { store: 'ICA', ingredient: 'Päron', discount: 40, validUntil: week6End },         // Päron 15 kr/kg
+  { store: 'ICA', ingredient: 'Havredryck', discount: 30, validUntil: week6End },    // Oatly iKaffe 2 för 30 kr
+  { store: 'ICA', ingredient: 'Mango', discount: 35, validUntil: week6End },         // Mogen mango 2 för 25 kr
+  { store: 'ICA', ingredient: 'Ärtor', discount: 25, validUntil: week6End },         // Ärtor majs & paprika 2 för 40 kr
 
-  // Coop - Vecka 6
-  { store: 'Coop', ingredient: 'Nötfärs', discount: 40, validUntil: week6End },
-  { store: 'Coop', ingredient: 'Lax', discount: 35, validUntil: week6End },
-  { store: 'Coop', ingredient: 'Potatis', discount: 25, validUntil: week6End },
-  { store: 'Coop', ingredient: 'Broccoli', discount: 30, validUntil: week6End },
-  { store: 'Coop', ingredient: 'Gurka', discount: 25, validUntil: week6End },
-  { store: 'Coop', ingredient: 'Ost', discount: 30, validUntil: week6End },
-  { store: 'Coop', ingredient: 'Kikärtor', discount: 35, validUntil: week6End },
-  { store: 'Coop', ingredient: 'Paprika', discount: 30, validUntil: week6End },
-  { store: 'Coop', ingredient: 'Kokosmjölk', discount: 25, validUntil: week6End },
-  { store: 'Coop', ingredient: 'Avokado', discount: 35, validUntil: week6End },
+  // Coop - Vecka 6 (RIKTIGA erbjudanden)
+  { store: 'Coop', ingredient: 'Yoghurt', discount: 35, validUntil: week6End },      // Arla Yoghurt 2 för 35 kr
+  { store: 'Coop', ingredient: 'Apelsin', discount: 40, validUntil: week6End },      // Apelsiner 17 kr/kg
+  { store: 'Coop', ingredient: 'Bacon', discount: 30, validUntil: week6End },        // Scan Baconskivor 39,90 kr
+  { store: 'Coop', ingredient: 'Knäckebröd', discount: 25, validUntil: week6End },   // Sport Knäckebröd 2 för 39 kr
+  { store: 'Coop', ingredient: 'Bröd', discount: 25, validUntil: week6End },         // Skogaholmslimpa 22,90 kr
+  { store: 'Coop', ingredient: 'Havredryck', discount: 30, validUntil: week6End },   // Oatly iKaffe 2 för 35 kr
 
-  // Willys - Vecka 6
-  { store: 'Willys', ingredient: 'Fläskfilé', discount: 35, validUntil: week6End },
-  { store: 'Willys', ingredient: 'Räkor', discount: 30, validUntil: week6End },
-  { store: 'Willys', ingredient: 'Ris', discount: 25, validUntil: week6End },
-  { store: 'Willys', ingredient: 'Krossade tomater', discount: 30, validUntil: week6End },
-  { store: 'Willys', ingredient: 'Blåbär', discount: 40, validUntil: week6End },
-  { store: 'Willys', ingredient: 'Jordgubbar', discount: 35, validUntil: week6End },
-  { store: 'Willys', ingredient: 'Filmjölk', discount: 20, validUntil: week6End },
-  { store: 'Willys', ingredient: 'Bacon', discount: 30, validUntil: week6End },
-  { store: 'Willys', ingredient: 'Grädde', discount: 25, validUntil: week6End },
-  { store: 'Willys', ingredient: 'Spaghetti', discount: 20, validUntil: week6End },
+  // Willys - Vecka 6 (RIKTIGA erbjudanden)
+  { store: 'Willys', ingredient: 'Ost', discount: 30, validUntil: week6End },        // Gouda Familjefavoriter 79,90 kr/kg
+  { store: 'Willys', ingredient: 'Falukorv', discount: 45, validUntil: week6End },   // Falukorv 19,90 kr (ord 35,90)
+  { store: 'Willys', ingredient: 'Högrev', discount: 30, validUntil: week6End },     // Högrev Nötkött 118 kr/kg
+  { store: 'Willys', ingredient: 'Nötfärs', discount: 30, validUntil: week6End },    // Högrev Nötkött
+  { store: 'Willys', ingredient: 'Vitkål', discount: 60, validUntil: week6End },     // Vitkål 4,90 kr/kg (ord 12,90)
+  { store: 'Willys', ingredient: 'Kål', discount: 60, validUntil: week6End },        // Vitkål
+  { store: 'Willys', ingredient: 'Kokosgrädde', discount: 30, validUntil: week6End }, // Kokosgrädde 2 för 24 kr
+  { store: 'Willys', ingredient: 'Kokosmjölk', discount: 30, validUntil: week6End }, // Kokosgrädde
+  { store: 'Willys', ingredient: 'Vårrullar', discount: 40, validUntil: week6End },  // Daloon Vårrullar 29,90 kr
+  { store: 'Willys', ingredient: 'Risnudlar', discount: 25, validUntil: week6End },  // Rice Noodles 17,90 kr
+  { store: 'Willys', ingredient: 'Blåbär', discount: 25, validUntil: week6End },     // Proviva Blåbär 24,90 kr
 
   // Lidl - Vecka 6 (RIKTIGA erbjudanden från reklamblad 2/2-8/2)
   // Frukt & Grönt

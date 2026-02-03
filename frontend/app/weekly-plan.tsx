@@ -327,6 +327,28 @@ const styles = StyleSheet.create({
   iconButton: {
     padding: 4,
   },
+  savingsCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.success + '15',
+    padding: 12,
+    borderRadius: 12,
+    marginBottom: 16,
+    gap: 12,
+  },
+  savingsInfo: {
+    flex: 1,
+  },
+  savingsText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.success,
+  },
+  savingsSubtext: {
+    fontSize: 12,
+    color: colors.textLight,
+    marginTop: 2,
+  },
   actionButtons: {
     flexDirection: 'row',
     gap: 12,

@@ -141,6 +141,21 @@ export default function WeeklyPlan() {
           </TouchableOpacity>
         </View>
 
+        {/* Savings indicator */}
+        {discountStats.count > 0 && (
+          <View style={styles.savingsCard}>
+            <Ionicons name="pricetag" size={20} color={colors.success} />
+            <View style={styles.savingsInfo}>
+              <Text style={styles.savingsText}>
+                {discountStats.count} varor på kampanj
+              </Text>
+              <Text style={styles.savingsSubtext}>
+                Matsedeln är optimerad för veckans rabatter
+              </Text>
+            </View>
+          </View>
+        )}
+
         {/* Action buttons */}
         <View style={styles.actionButtons}>
           <TouchableOpacity 

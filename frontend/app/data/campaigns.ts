@@ -1,19 +1,36 @@
 import { Campaign, Store } from '../types';
 
-// Vecka 6: 2-8 februari 2025 (denna vecka)
-const week6Start = new Date('2025-02-02');
-const week6End = new Date('2025-02-08');
+// Dynamiskt beräkna veckodatum baserat på aktuell vecka
+const getWeekDates = (weekOffset: number = 0) => {
+  const now = new Date();
+  const currentDay = now.getDay();
+  const diff = currentDay === 0 ? -6 : 1 - currentDay; // Måndag som start
+  
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() + diff + (weekOffset * 7));
+  weekStart.setHours(0, 0, 0, 0);
+  
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekEnd.setHours(23, 59, 59, 999);
+  
+  return { start: weekStart, end: weekEnd };
+};
 
-// Vecka 7: 9-15 februari 2025
-const week7Start = new Date('2025-02-09');
-const week7End = new Date('2025-02-15');
+// Denna vecka (vecka 6)
+const thisWeek = getWeekDates(0);
+const week6End = thisWeek.end;
 
-// Vecka 8: 16-22 februari 2025
-const week8Start = new Date('2025-02-16');
-const week8End = new Date('2025-02-22');
+// Nästa vecka (vecka 7)
+const nextWeek = getWeekDates(1);
+const week7End = nextWeek.end;
+
+// Om två veckor (vecka 8)
+const weekAfterNext = getWeekDates(2);
+const week8End = weekAfterNext.end;
 
 export const campaigns: Campaign[] = [
-  // ==================== VECKA 6 (2-8 februari 2025) ====================
+  // ==================== DENNA VECKA (Vecka 6) ====================
   
   // ICA Supermarket - Vecka 6 (RIKTIGA erbjudanden)
   { store: 'ICA', ingredient: 'Cheddar', discount: 35, validUntil: week6End },       // Riven Cheddar & Mozzarella 20 kr

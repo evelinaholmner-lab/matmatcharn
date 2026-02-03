@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Modal, FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { sv } from 'date-fns/locale';
 import { Recipe, MealType } from './types';
 import { recipes } from './data/recipes';
+import { getCampaignForIngredient } from './data/campaigns';
 
 const MEAL_COLORS: Record<MealType, string> = {
   frukost: colors.frukost,

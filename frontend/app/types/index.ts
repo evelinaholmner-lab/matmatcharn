@@ -76,6 +76,17 @@ export interface WeeklyMealPlan {
   days: DayPlan[];
 }
 
+// Kategorier för inköpslistan
+export type IngredientCategory = 
+  | 'Mejeri'
+  | 'Kött & Fågel'
+  | 'Fisk & Skaldjur'
+  | 'Frukt & Grönt'
+  | 'Torrvaror'
+  | 'Bröd'
+  | 'Kryddor & Såser'
+  | 'Övrigt';
+
 export interface ShoppingItem {
   ingredient: string;
   amount: number;
@@ -83,9 +94,12 @@ export interface ShoppingItem {
   onSale: boolean;
   discount?: number;
   checked: boolean;
+  category: IngredientCategory;
+  isManuallyAdded?: boolean;
 }
 
 export interface ShoppingList {
   byStore: Record<Store, ShoppingItem[]>;
   totalItems: number;
+  manualItems: ShoppingItem[];
 }

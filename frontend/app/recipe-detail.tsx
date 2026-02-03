@@ -1,11 +1,12 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Card } from './components/Card';
 import { colors } from './utils/colors';
 import { recipes } from './data/recipes';
+import { getRecipeImage } from './data/recipe-images';
 import { Ionicons } from '@expo/vector-icons';
 
 const MEAL_COLORS = {

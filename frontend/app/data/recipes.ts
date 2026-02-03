@@ -1968,3 +1968,6 @@ const baseRecipes: Recipe[] = [
     imageColor: '#D4C5F9'
   },
 ];
+
+// Kombinera alla recept (200 totalt)
+export const recipes: Recipe[] = [...baseRecipes, ...additionalRecipes];

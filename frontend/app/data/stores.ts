@@ -127,6 +127,13 @@ export const storeLocations: StoreLocation[] = [
     lng: 20.2420,
     category: 'Willys'
   },
+  {
+    name: 'Willys Ersboda',
+    address: 'Gräddvägen 1, 906 21 Umeå',
+    lat: 63.8410,
+    lng: 20.2680,
+    category: 'Willys'
+  },
   
   // ========== Lidl Butiker ==========
   {

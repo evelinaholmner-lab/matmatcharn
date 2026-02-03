@@ -19,8 +19,10 @@ const MEAL_COLORS = {
 export default function RecipeDetail() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const [imageLoading, setImageLoading] = useState(true);
   
   const recipe = recipes.find(r => r.id === params.recipeId);
+  const recipeImage = recipe ? getRecipeImage(recipe.name, recipe.mealType) : '';
 
   if (!recipe) {
     return (
@@ -51,8 +53,21 @@ export default function RecipeDetail() {
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        {/* Hero */}
+        {/* Hero with Image */}
         <View style={[styles.hero, { backgroundColor: recipe.imageColor }]}>
+          {imageLoading && (
+            <View style={styles.imageLoadingContainer}>
+              <ActivityIndicator size="large" color="#fff" />
+            </View>
+          )}
+          <Image
+            source={{ uri: recipeImage }}
+            style={styles.heroImage}
+            resizeMode="cover"
+            onLoadStart={() => setImageLoading(true)}
+            onLoadEnd={() => setImageLoading(false)}
+          />
+          <View style={styles.heroOverlay} />
           <View style={styles.heroContent}>
             <View style={styles.mealTypeBadge}>
               <Text style={styles.mealTypeText}>{recipe.mealType.toUpperCase()}</Text>

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Modal, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Modal, FlatList, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,6 +13,7 @@ import { sv } from 'date-fns/locale';
 import { Recipe, MealType } from './types';
 import { recipes } from './data/recipes';
 import { getCampaignForIngredient } from './data/campaigns';
+import { getRecipeImage } from './data/recipe-images';
 
 const MEAL_COLORS: Record<MealType, string> = {
   frukost: colors.frukost,

@@ -257,6 +257,7 @@ export const storeToCategory: Record<string, 'ICA' | 'Coop' | 'Willys' | 'Lidl'>
   
   // Willys butiker
   'Willys Umeå Syd': 'Willys',
+  'Willys Ersboda': 'Willys',
   
   // Lidl butiker
   'Lidl Umeå': 'Lidl',

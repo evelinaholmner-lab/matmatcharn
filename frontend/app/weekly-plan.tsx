@@ -221,6 +221,13 @@ export default function WeeklyPlan() {
                   })}
                   activeOpacity={0.7}
                 >
+                  {/* Recipe Image */}
+                  <Image
+                    source={{ uri: getRecipeImage(meal.recipe.name, meal.recipe.mealType) }}
+                    style={styles.mealImage}
+                    resizeMode="cover"
+                  />
+                  
                   <View 
                     style={[
                       styles.mealTypeIndicator, 

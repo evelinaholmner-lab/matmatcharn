@@ -160,6 +160,14 @@ export default function WeeklyPlan() {
         <View style={styles.actionButtons}>
           <TouchableOpacity 
             style={styles.actionButton}
+            onPress={() => router.push('/flyers')}
+          >
+            <Ionicons name="newspaper" size={20} color={colors.primary} />
+            <Text style={styles.actionButtonText}>Reklamblad</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.actionButton}
             onPress={handleRefresh}
           >
             <Ionicons name="refresh" size={20} color={colors.primary} />

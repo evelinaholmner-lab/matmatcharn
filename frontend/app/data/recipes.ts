@@ -1,7 +1,8 @@
 import { Recipe } from '../types';
+import { additionalRecipes } from './recipes-additional';
 
 // 100 svenska recept med ingredienser och allergener
-export const recipes: Recipe[] = [
+const baseRecipes: Recipe[] = [
   // FRUKOST (25 recept)
   {
     id: '1',

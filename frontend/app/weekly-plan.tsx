@@ -36,6 +36,32 @@ export default function WeeklyPlan() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [selectedMealType, setSelectedMealType] = useState<MealType | null>(null);
 
+  // Beräkna antal rabatterade ingredienser i matsedeln
+  const discountStats = useMemo(() => {
+    if (!weeklyMealPlan || !userProfile) return { count: 0, totalDiscount: 0 };
+    
+    let discountedIngredients = 0;
+    let totalIngredients = 0;
+    
+    weeklyMealPlan.days.forEach(day => {
+      day.meals.forEach(meal => {
+        meal.recipe.ingredients.forEach(ingredient => {
+          totalIngredients++;
+          const campaign = getCampaignForIngredient(ingredient.name, userProfile.selectedStores);
+          if (campaign) {
+            discountedIngredients++;
+          }
+        });
+      });
+    });
+    
+    return { 
+      count: discountedIngredients, 
+      total: totalIngredients,
+      percentage: totalIngredients > 0 ? Math.round((discountedIngredients / totalIngredients) * 100) : 0
+    };
+  }, [weeklyMealPlan, userProfile]);
+
   const handleRefresh = () => {
     setRefreshing(true);
     generateWeeklyMealPlan();

@@ -156,6 +156,12 @@ export const getCampaignForIngredient = (ingredient: string, stores: Store[]): C
   );
 };
 
+// Hjälpfunktion för att få alla giltiga kampanjer för denna vecka
+export const getCurrentWeekCampaigns = (): Campaign[] => {
+  const now = new Date();
+  return campaigns.filter(c => c.validUntil >= now);
+};
+
 // Hjälpfunktion för att få alla giltiga kampanjer för en viss vecka
 export const getCampaignsForWeek = (weekOffset: number = 0): Campaign[] => {
   const now = new Date();

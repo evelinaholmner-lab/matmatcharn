@@ -9,35 +9,31 @@ import { colors } from '../utils/colors';
 import { DietaryPreference, Allergen } from '../types';
 import { Ionicons } from '@expo/vector-icons';
 
-const DIETARY_PREFERENCES: { label: string; value: DietaryPreference; icon: string }[] = [
-  { label: 'Vegetariskt', value: 'vegetariskt', icon: 'leaf' },
-  { label: 'Veganskt', value: 'veganskt', icon: 'nutrition' },
-  { label: 'Barnvänlig', value: 'barnvänlig', icon: 'happy' },
-  { label: 'Keto', value: 'keto', icon: 'fitness' },
-  { label: 'Proteinrik', value: 'proteinrik', icon: 'barbell' },
+// Nya kostpreferenser (singel val)
+const DIETARY_PREFERENCES: { label: string; value: DietaryPreference; icon: string; description: string }[] = [
+  { label: 'Allätare', value: 'allatare', icon: 'restaurant', description: 'Äter allt' },
+  { label: 'Pescetariansk', value: 'pescetariansk', icon: 'fish', description: 'Fisk, ej kött' },
+  { label: 'Flexitariansk', value: 'flexitariansk', icon: 'leaf', description: 'Mest vegetariskt' },
 ];
 
+// Utökade allergier (flerval)
 const ALLERGENS: { label: string; value: Allergen; icon: string }[] = [
-  { label: 'Nötter', value: 'nöt', icon: 'alert-circle' },
-  { label: 'Ägg', value: 'ägg', icon: 'alert-circle' },
-  { label: 'Laktos', value: 'laktos', icon: 'alert-circle' },
-  { label: 'Mjölkprotein', value: 'mjölkprotein', icon: 'alert-circle' },
-  { label: 'Gluten', value: 'gluten', icon: 'alert-circle' },
+  { label: 'Gluten', value: 'gluten', icon: 'ban' },
+  { label: 'Laktos', value: 'laktos', icon: 'ban' },
+  { label: 'Mjölkprotein', value: 'mjolkprotein', icon: 'ban' },
+  { label: 'Ägg', value: 'agg', icon: 'ban' },
+  { label: 'Nötter / jordnötter', value: 'notter', icon: 'ban' },
+  { label: 'Soja', value: 'soja', icon: 'ban' },
+  { label: 'Fisk', value: 'fisk', icon: 'ban' },
+  { label: 'Skaldjur', value: 'skaldjur', icon: 'ban' },
+  { label: 'Sesam', value: 'sesam', icon: 'ban' },
 ];
 
 export default function OnboardingStep2() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const [selectedPreferences, setSelectedPreferences] = useState<DietaryPreference[]>([]);
+  const [selectedPreference, setSelectedPreference] = useState<DietaryPreference>('allatare');
   const [selectedAllergies, setSelectedAllergies] = useState<Allergen[]>([]);
-
-  const togglePreference = (pref: DietaryPreference) => {
-    setSelectedPreferences(prev => 
-      prev.includes(pref) 
-        ? prev.filter(p => p !== pref)
-        : [...prev, pref]
-    );
-  };
 
   const toggleAllergy = (allergy: Allergen) => {
     setSelectedAllergies(prev => 
@@ -56,7 +52,7 @@ export default function OnboardingStep2() {
         userLat: params.userLat,
         userLng: params.userLng,
         city: params.city,
-        dietaryPreferences: JSON.stringify(selectedPreferences),
+        dietaryPreference: selectedPreference,
         allergies: JSON.stringify(selectedAllergies),
       }
     });
@@ -75,64 +71,103 @@ export default function OnboardingStep2() {
             <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={styles.title}>Kostpreferenser</Text>
-          <Text style={styles.subtitle}>Vilka är era matpreferenser?</Text>
+          <Text style={styles.subtitle}>Anpassa dina val</Text>
         </View>
 
+        {/* Kostpreferens - singel val */}
         <Card>
-          <Text style={styles.sectionTitle}>Kostpreferenser (valfritt)</Text>
-          <View style={styles.optionsGrid}>
+          <Text style={styles.sectionTitle}>Kostpreferens</Text>
+          <Text style={styles.sectionHint}>Välj ett alternativ</Text>
+          <View style={styles.preferenceList}>
             {DIETARY_PREFERENCES.map((pref) => (
               <TouchableOpacity
                 key={pref.value}
                 style={[
-                  styles.option,
-                  selectedPreferences.includes(pref.value) && styles.optionSelected
+                  styles.preferenceOption,
+                  selectedPreference === pref.value && styles.preferenceSelected
                 ]}
-                onPress={() => togglePreference(pref.value)}
+                onPress={() => setSelectedPreference(pref.value)}
               >
-                <Ionicons 
-                  name={pref.icon as any} 
-                  size={24} 
-                  color={selectedPreferences.includes(pref.value) ? colors.primary : colors.textLight} 
-                />
-                <Text style={[
-                  styles.optionText,
-                  selectedPreferences.includes(pref.value) && styles.optionTextSelected
+                <View style={[
+                  styles.radioOuter,
+                  selectedPreference === pref.value && styles.radioOuterSelected
                 ]}>
-                  {pref.label}
-                </Text>
+                  {selectedPreference === pref.value && (
+                    <View style={styles.radioInner} />
+                  )}
+                </View>
+                <View style={styles.preferenceContent}>
+                  <View style={styles.preferenceHeader}>
+                    <Ionicons 
+                      name={pref.icon as any} 
+                      size={22} 
+                      color={selectedPreference === pref.value ? colors.primary : colors.textLight} 
+                    />
+                    <Text style={[
+                      styles.preferenceLabel,
+                      selectedPreference === pref.value && styles.preferenceLabelSelected
+                    ]}>
+                      {pref.label}
+                    </Text>
+                  </View>
+                  <Text style={styles.preferenceDescription}>{pref.description}</Text>
+                </View>
               </TouchableOpacity>
             ))}
           </View>
         </Card>
 
+        {/* Allergier - flerval */}
         <Card>
           <Text style={styles.sectionTitle}>Allergier</Text>
-          <View style={styles.optionsGrid}>
+          <Text style={styles.sectionHint}>Välj alla som gäller</Text>
+          <View style={styles.allergiesGrid}>
             {ALLERGENS.map((allergy) => (
               <TouchableOpacity
                 key={allergy.value}
                 style={[
-                  styles.option,
-                  styles.allergyOption,
-                  selectedAllergies.includes(allergy.value) && styles.allergySelected
+                  styles.allergyChip,
+                  selectedAllergies.includes(allergy.value) && styles.allergyChipSelected
                 ]}
                 onPress={() => toggleAllergy(allergy.value)}
               >
-                <Ionicons 
-                  name={allergy.icon as any} 
-                  size={24} 
-                  color={selectedAllergies.includes(allergy.value) ? colors.error : colors.textLight} 
-                />
+                {selectedAllergies.includes(allergy.value) && (
+                  <Ionicons name="checkmark" size={16} color="#fff" />
+                )}
                 <Text style={[
-                  styles.optionText,
-                  selectedAllergies.includes(allergy.value) && styles.allergyTextSelected
+                  styles.allergyChipText,
+                  selectedAllergies.includes(allergy.value) && styles.allergyChipTextSelected
                 ]}>
                   {allergy.label}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
+          
+          {selectedAllergies.length === 0 && (
+            <View style={styles.noAllergiesHint}>
+              <Ionicons name="checkmark-circle" size={20} color={colors.success} />
+              <Text style={styles.noAllergiesText}>Inga allergier valda</Text>
+            </View>
+          )}
+        </Card>
+
+        {/* Sammanfattning */}
+        <Card style={styles.summaryCard}>
+          <View style={styles.summaryRow}>
+            <Ionicons name="restaurant" size={20} color={colors.primary} />
+            <Text style={styles.summaryText}>
+              {DIETARY_PREFERENCES.find(p => p.value === selectedPreference)?.label}
+            </Text>
+          </View>
+          {selectedAllergies.length > 0 && (
+            <View style={styles.summaryRow}>
+              <Ionicons name="alert-circle" size={20} color={colors.error} />
+              <Text style={styles.summaryText}>
+                {selectedAllergies.length} allergi{selectedAllergies.length > 1 ? 'er' : ''} att undvika
+              </Text>
+            </View>
+          )}
         </Card>
       </ScrollView>
 
@@ -155,7 +190,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 24,
-    paddingBottom: 120,
+    paddingBottom: 140,
   },
   header: {
     marginBottom: 24,
@@ -180,46 +215,128 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: colors.text,
+    marginBottom: 4,
+  },
+  sectionHint: {
+    fontSize: 14,
+    color: colors.textLight,
     marginBottom: 16,
   },
-  optionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  // Kostpreferens styles
+  preferenceList: {
     gap: 12,
   },
-  option: {
+  preferenceOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    padding: 16,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: colors.border,
     backgroundColor: colors.background,
-    gap: 8,
+    gap: 12,
   },
-  optionSelected: {
+  preferenceSelected: {
     borderColor: colors.primary,
-    backgroundColor: colors.primaryLight + '20',
+    backgroundColor: colors.primaryLight + '15',
   },
-  allergyOption: {
+  radioOuter: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
     borderColor: colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  allergySelected: {
-    borderColor: colors.error,
-    backgroundColor: colors.error + '15',
+  radioOuterSelected: {
+    borderColor: colors.primary,
   },
-  optionText: {
+  radioInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: colors.primary,
+  },
+  preferenceContent: {
+    flex: 1,
+  },
+  preferenceHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
+  },
+  preferenceLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  preferenceLabelSelected: {
+    color: colors.primary,
+  },
+  preferenceDescription: {
     fontSize: 14,
     color: colors.textLight,
+  },
+  // Allergier styles
+  allergiesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  allergyChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    backgroundColor: colors.background,
+    gap: 6,
+  },
+  allergyChipSelected: {
+    borderColor: colors.error,
+    backgroundColor: colors.error,
+  },
+  allergyChipText: {
+    fontSize: 14,
+    color: colors.text,
     fontWeight: '500',
   },
-  optionTextSelected: {
-    color: colors.text,
+  allergyChipTextSelected: {
+    color: '#fff',
   },
-  allergyTextSelected: {
-    color: colors.text,
+  noAllergiesHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+    gap: 8,
   },
+  noAllergiesText: {
+    fontSize: 14,
+    color: colors.success,
+    fontWeight: '500',
+  },
+  // Sammanfattning
+  summaryCard: {
+    backgroundColor: colors.primaryLight + '10',
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 8,
+  },
+  summaryText: {
+    fontSize: 15,
+    color: colors.text,
+    fontWeight: '500',
+  },
+  // Footer
   footer: {
     position: 'absolute',
     bottom: 0,

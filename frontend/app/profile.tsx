@@ -10,14 +10,34 @@ import { colors } from './utils/colors';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Översättningar för kostpreferenser
+const DIET_LABELS: Record<string, string> = {
+  'allatare': 'Allätare',
+  'pescetariansk': 'Pescetariansk',
+  'flexitariansk': 'Flexitariansk',
+};
+
+// Översättningar för allergier
+const ALLERGY_LABELS: Record<string, string> = {
+  'gluten': 'Gluten',
+  'laktos': 'Laktos',
+  'mjolkprotein': 'Mjölkprotein',
+  'agg': 'Ägg',
+  'notter': 'Nötter/jordnötter',
+  'soja': 'Soja',
+  'fisk': 'Fisk',
+  'skaldjur': 'Skaldjur',
+  'sesam': 'Sesam',
+};
+
 export default function Profile() {
   const router = useRouter();
-  const { userProfile, generateWeeklyMealPlan } = useAppStore();
+  const { userProfile, generateShoppingList } = useAppStore();
 
-  const handleRegenerateWeek = () => {
-    generateWeeklyMealPlan();
+  const handleRegenerateList = () => {
+    generateShoppingList();
     if (Platform.OS === 'web') {
-      alert('En ny veckomatsedel har genererats!');
+      alert('Inköpslistan har uppdaterats!');
       router.back();
     }
   };
@@ -37,7 +57,6 @@ export default function Profile() {
   };
 
   const handleEditProfile = () => {
-    // Navigera direkt till onboarding step 1
     router.push('/onboarding/step1');
   };
 
@@ -72,33 +91,29 @@ export default function Profile() {
             <Text style={styles.infoLabel}>Antal personer:</Text>
             <Text style={styles.infoValue}>{userProfile.numberOfPeople}</Text>
           </View>
-          {userProfile.wantsMealPrep && (
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Matlådor (extra portioner):</Text>
-              <Text style={styles.infoValue}>{userProfile.mealPrepPortions}</Text>
-            </View>
-          )}
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Plats:</Text>
+            <Text style={styles.infoValue}>{userProfile.location || 'Ej angiven'}</Text>
+          </View>
         </Card>
 
-        {/* Dietary Preferences */}
-        {userProfile.dietaryPreferences.length > 0 && (
-          <Card>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="leaf" size={24} color={colors.secondary} />
-              <Text style={styles.sectionTitle}>Kostpreferenser</Text>
+        {/* Dietary Preference */}
+        <Card>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="restaurant" size={24} color={colors.secondary} />
+            <Text style={styles.sectionTitle}>Kostpreferens</Text>
+          </View>
+          <View style={styles.tagsContainer}>
+            <View style={[styles.tag, styles.prefTag]}>
+              <Text style={styles.tagText}>
+                {DIET_LABELS[userProfile.dietaryPreference] || userProfile.dietaryPreference}
+              </Text>
             </View>
-            <View style={styles.tagsContainer}>
-              {userProfile.dietaryPreferences.map((pref, index) => (
-                <View key={index} style={[styles.tag, styles.prefTag]}>
-                  <Text style={styles.tagText}>{pref}</Text>
-                </View>
-              ))}
-            </View>
-          </Card>
-        )}
+          </View>
+        </Card>
 
         {/* Allergies */}
-        {userProfile.allergies.length > 0 && (
+        {userProfile.allergies && userProfile.allergies.length > 0 && (
           <Card>
             <View style={styles.sectionHeader}>
               <Ionicons name="alert-circle" size={24} color={colors.error} />
@@ -107,33 +122,18 @@ export default function Profile() {
             <View style={styles.tagsContainer}>
               {userProfile.allergies.map((allergy, index) => (
                 <View key={index} style={[styles.tag, styles.allergyTag]}>
-                  <Text style={styles.tagText}>{allergy}</Text>
+                  <Text style={styles.tagText}>{ALLERGY_LABELS[allergy] || allergy}</Text>
                 </View>
               ))}
             </View>
           </Card>
         )}
 
-        {/* Selected Meals */}
-        <Card>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="restaurant" size={24} color={colors.accent} />
-            <Text style={styles.sectionTitle}>Valda måltider</Text>
-          </View>
-          <View style={styles.tagsContainer}>
-            {userProfile.selectedMeals.map((meal, index) => (
-              <View key={index} style={[styles.tag, styles.mealTag]}>
-                <Text style={styles.tagText}>{meal}</Text>
-              </View>
-            ))}
-          </View>
-        </Card>
-
         {/* Stores */}
         <Card>
           <View style={styles.sectionHeader}>
             <Ionicons name="storefront" size={24} color={colors.primary} />
-            <Text style={styles.sectionTitle}>Butiker</Text>
+            <Text style={styles.sectionTitle}>Valda butiker</Text>
           </View>
           <View style={styles.tagsContainer}>
             {userProfile.selectedStores.map((store, index) => (
@@ -152,8 +152,8 @@ export default function Profile() {
             variant="secondary"
           />
           <Button 
-            title="Generera ny vecka" 
-            onPress={handleRegenerateWeek}
+            title="Uppdatera inköpslista" 
+            onPress={handleRegenerateList}
             variant="secondary"
           />
           <Button 
@@ -164,7 +164,7 @@ export default function Profile() {
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Veckomatsedel App v1.0</Text>
+          <Text style={styles.footerText}>Kampanjappen v1.0</Text>
           <Text style={styles.footerText}>Med ❤️ från Sverige</Text>
         </View>
       </ScrollView>
@@ -246,9 +246,6 @@ const styles = StyleSheet.create({
   allergyTag: {
     backgroundColor: colors.error + '20',
   },
-  mealTag: {
-    backgroundColor: colors.accent + '30',
-  },
   storeTag: {
     backgroundColor: colors.primary + '20',
   },
@@ -256,7 +253,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: colors.text,
-    textTransform: 'capitalize',
   },
   actionsContainer: {
     marginTop: 8,

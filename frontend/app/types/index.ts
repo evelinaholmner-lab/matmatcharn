@@ -1,79 +1,47 @@
 // Type definitions for the app
 
-export type DietaryPreference = 'vegetariskt' | 'veganskt' | 'barnvänlig' | 'keto' | 'proteinrik';
-export type Allergen = 'nöt' | 'ägg' | 'laktos' | 'mjölkprotein' | 'gluten';
+// Nya kostpreferenser
+export type DietaryPreference = 'allatare' | 'pescetariansk' | 'flexitariansk';
+
+// Utökade allergier
+export type Allergen = 
+  | 'gluten' 
+  | 'laktos' 
+  | 'mjolkprotein' 
+  | 'agg' 
+  | 'notter' 
+  | 'soja' 
+  | 'fisk' 
+  | 'skaldjur' 
+  | 'sesam';
+
 export type MealType = 'frukost' | 'lunch' | 'middag' | 'mellanmål';
 export type Store = 'ICA' | 'Coop' | 'Willys' | 'Lidl';
-
-// Specific store names
-export type SpecificStore = 
-  | 'ICA Maxi Umeå'
-  | 'ICA Kvantum Ersboda'
-  | 'ICA Nära Bygdeå'
-  | 'ICA Maxi Skellefteå'
-  | 'ICA Maxi Lycksele'
-  | 'Coop Forum Umeå'
-  | 'Coop Bygdeå'
-  | 'Coop Forum Skellefteå'
-  | 'Coop Lycksele'
-  | 'Willys Vasaplan'
-  | 'Willys Skellefteå'
-  | 'Willys Lycksele';
-
-export interface Ingredient {
-  name: string;
-  amount: number;
-  unit: string;
-}
-
-export interface Recipe {
-  id: string;
-  name: string;
-  description: string;
-  mealType: MealType;
-  dietaryTags: DietaryPreference[];
-  allergens: Allergen[];
-  ingredients: Ingredient[];
-  servings: number;
-  prepTime: number;
-  cookTime: number;
-  instructions: string[];
-  imageColor: string; // For illustration placeholder
-}
 
 export interface Campaign {
   store: Store;
   ingredient: string;
+  originalPrice?: number;
+  campaignPrice: number;
   discount: number;
+  unit?: string;
   validUntil: Date;
+  category: IngredientCategory;
+  // Allergener som produkten innehåller
+  allergens?: Allergen[];
+  // Om produkten är vegetarisk/pescetariansk
+  isVegetarian?: boolean;
+  isFish?: boolean;
+  isMeat?: boolean;
 }
 
 export interface UserProfile {
   numberOfPeople: number;
-  dietaryPreferences: DietaryPreference[];
+  dietaryPreference: DietaryPreference; // Ändrat till singular
   allergies: Allergen[];
   location: string;
-  selectedMeals: MealType[];
   selectedStores: Store[];
-  wantsMealPrep: boolean; // matlådor
-  mealPrepPortions: number; // extra portioner för matlådor
   onboardingCompleted: boolean;
-}
-
-export interface DayMeal {
-  mealType: MealType;
-  recipe: Recipe;
-  portions: number;
-}
-
-export interface DayPlan {
-  date: Date;
-  meals: DayMeal[];
-}
-
-export interface WeeklyMealPlan {
-  weekStart: Date;
-  days: DayPlan[];
 }
 
 // Kategorier för inköpslistan
@@ -85,6 +53,7 @@ export type IngredientCategory =
   | 'Torrvaror'
   | 'Bröd'
   | 'Kryddor & Såser'
+  | 'Drycker'
   | 'Övrigt';
 
 export interface ShoppingItem {
@@ -93,8 +62,11 @@ export interface ShoppingItem {
   unit: string;
   onSale: boolean;
   discount?: number;
+  price?: number;
+  originalPrice?: number;
   checked: boolean;
   category: IngredientCategory;
+  store?: Store;
   isManuallyAdded?: boolean;
 }
 
@@ -102,4 +74,21 @@ export interface ShoppingList {
   byStore: Record<Store, ShoppingItem[]>;
   totalItems: number;
   manualItems: ShoppingItem[];
+}
+
+// Förslag baserat på kampanjer
+export interface CampaignSuggestion {
+  id: string;
+  title: string;
+  description: string;
+  ingredients: Campaign[];
+  totalSavings: number;
+  category: IngredientCategory;
+  matchesPreferences: boolean;
+}
+
+export interface WeeklySuggestions {
+  weekStart: Date;
+  suggestions: CampaignSuggestion[];
+  totalPotentialSavings: number;
 }

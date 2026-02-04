@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,16 +7,9 @@ import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { colors } from '../utils/colors';
 import { useAppStore } from '../store';
-import { MealType, DietaryPreference, Allergen } from '../types';
+import { DietaryPreference, Allergen } from '../types';
 import { Ionicons } from '@expo/vector-icons';
 import { findNearbyStores, StoreLocation } from '../data/stores';
-
-const MEAL_TYPES: { label: string; value: MealType; icon: string }[] = [
-  { label: 'Frukost', value: 'frukost', icon: 'sunny' },
-  { label: 'Lunch', value: 'lunch', icon: 'restaurant' },
-  { label: 'Middag', value: 'middag', icon: 'moon' },
-  { label: 'Mellanmål', value: 'mellanmål', icon: 'cafe' },
-];
 
 const STORE_COLORS: Record<string, string> = {
   'ICA': '#E3000F',
@@ -30,13 +23,10 @@ export default function OnboardingStep3() {
   const params = useLocalSearchParams();
   const { setUserProfile } = useAppStore();
   
-  const [selectedMeals, setSelectedMeals] = useState<MealType[]>(['lunch', 'middag']);
   const [selectedStores, setSelectedStores] = useState<string[]>([]);
   const [nearbyStores, setNearbyStores] = useState<Array<StoreLocation & { distance: number }>>([]);
   const [allStores, setAllStores] = useState<Array<StoreLocation & { distance: number }>>([]);
   const [showAllStores, setShowAllStores] = useState(false);
-  const [wantsMealPrep, setWantsMealPrep] = useState(false);
-  const [mealPrepPortions, setMealPrepPortions] = useState(2);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Hitta närliggande butiker när komponenten laddar
@@ -55,14 +45,6 @@ export default function OnboardingStep3() {
     }
   }, [params.userLat, params.userLng]);
 
-  const toggleMeal = (meal: MealType) => {
-    setSelectedMeals(prev => 
-      prev.includes(meal) 
-        ? prev.filter(m => m !== meal)
-        : [...prev, meal]
-    );
-  };
-
   const toggleStore = (storeName: string) => {
     setSelectedStores(prev => {
       if (prev.includes(storeName)) {
@@ -79,40 +61,42 @@ export default function OnboardingStep3() {
   };
 
   const handleFinish = async () => {
-    if (selectedMeals.length === 0 || selectedStores.length === 0) {
+    if (selectedStores.length === 0) {
       return;
     }
 
     setIsSubmitting(true);
 
-    const numberOfPeople = parseInt(params.numberOfPeople as string);
-    const dietaryPreferences = JSON.parse(params.dietaryPreferences as string) as DietaryPreference[];
-    const allergies = JSON.parse(params.allergies as string) as Allergen[];
+    const numberOfPeople = parseInt(params.numberOfPeople as string) || 2;
+    const dietaryPreference = params.dietaryPreference as DietaryPreference || 'allatare';
+    const allergies = params.allergies ? JSON.parse(params.allergies as string) as Allergen[] : [];
     const address = params.address as string;
 
     // Konvertera specifika butiksnamn till kategorier för kampanjer
     const storeCategories = selectedStores.map(storeName => {
-      const store = nearbyStores.find(s => s.name === storeName);
+      const store = [...nearbyStores, ...allStores].find(s => s.name === storeName);
       return store?.category;
-    }).filter((cat): cat is 'ICA' | 'Coop' | 'Willys' => cat !== undefined);
+    }).filter((cat): cat is 'ICA' | 'Coop' | 'Willys' | 'Lidl' => cat !== undefined);
+
+    // Ta bort dubbletter
+    const uniqueStores = [...new Set(storeCategories)];
 
     const profile = {
       numberOfPeople,
-      dietaryPreferences,
+      dietaryPreference,
       allergies,
       location: address,
-      selectedMeals,
-      selectedStores: storeCategories,
-      wantsMealPrep,
-      mealPrepPortions,
+      selectedStores: uniqueStores,
       onboardingCompleted: true,
     };
 
     await setUserProfile(profile);
     
-    // Navigera till huvudvy
+    // Navigera till kampanjvy
     router.replace('/weekly-plan');
   };
+
+  const displayedStores = showAllStores ? allStores : nearbyStores;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -122,155 +106,106 @@ export default function OnboardingStep3() {
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
             <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
-          <Text style={styles.title}>Nästan klar!</Text>
-          <Text style={styles.subtitle}>Vilka måltider och butiker?</Text>
+          <Text style={styles.title}>Välj butiker</Text>
+          <Text style={styles.subtitle}>Vilka butiker vill du bevaka kampanjer hos?</Text>
         </View>
 
+        {/* Sammanfattning av preferenser */}
+        <Card style={styles.summaryCard}>
+          <View style={styles.summaryRow}>
+            <Ionicons name="people" size={18} color={colors.primary} />
+            <Text style={styles.summaryText}>{params.numberOfPeople || 2} personer</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Ionicons name="restaurant" size={18} color={colors.primary} />
+            <Text style={styles.summaryText}>
+              {params.dietaryPreference === 'pescetariansk' ? 'Pescetarian' : 
+               params.dietaryPreference === 'flexitariansk' ? 'Flexitarian' : 'Allätare'}
+            </Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Ionicons name="location" size={18} color={colors.primary} />
+            <Text style={styles.summaryText}>{params.city || 'Umeå'}</Text>
+          </View>
+        </Card>
+
+        {/* Butiker */}
         <Card>
-          <Text style={styles.sectionTitle}>Vilka måltider vill ni ha?</Text>
-          <View style={styles.optionsGrid}>
-            {MEAL_TYPES.map((meal) => (
+          <View style={styles.storeHeader}>
+            <Text style={styles.sectionTitle}>
+              {showAllStores ? 'Alla butiker' : 'Butiker nära dig'}
+            </Text>
+            <Text style={styles.storeCount}>
+              {displayedStores.length} butiker
+            </Text>
+          </View>
+          
+          <TouchableOpacity 
+            style={styles.toggleAllButton}
+            onPress={() => setShowAllStores(!showAllStores)}
+          >
+            <Ionicons 
+              name={showAllStores ? "location" : "globe"} 
+              size={18} 
+              color={colors.primary} 
+            />
+            <Text style={styles.toggleAllText}>
+              {showAllStores ? 'Visa endast närliggande' : 'Se alla butiker'}
+            </Text>
+          </TouchableOpacity>
+
+          <View style={styles.storeList}>
+            {displayedStores.map((store) => (
               <TouchableOpacity
-                key={meal.value}
+                key={store.name}
                 style={[
-                  styles.mealOption,
-                  selectedMeals.includes(meal.value) && styles.mealOptionSelected
+                  styles.storeItem,
+                  selectedStores.includes(store.name) && styles.storeItemSelected,
+                  { borderLeftColor: STORE_COLORS[store.category] }
                 ]}
-                onPress={() => toggleMeal(meal.value)}
+                onPress={() => toggleStore(store.name)}
               >
-                <Ionicons 
-                  name={meal.icon as any} 
-                  size={28} 
-                  color={selectedMeals.includes(meal.value) ? colors.primary : colors.textLight} 
-                />
-                <Text style={[
-                  styles.mealOptionText,
-                  selectedMeals.includes(meal.value) && styles.mealOptionTextSelected
-                ]}>
-                  {meal.label}
-                </Text>
+                <View style={styles.storeInfo}>
+                  <View style={[styles.storeIcon, { backgroundColor: STORE_COLORS[store.category] + '20' }]}>
+                    <Ionicons name="storefront" size={18} color={STORE_COLORS[store.category]} />
+                  </View>
+                  <View style={styles.storeDetails}>
+                    <Text style={styles.storeName}>{store.name}</Text>
+                    <Text style={styles.storeAddress}>{store.address}</Text>
+                  </View>
+                </View>
+                <View style={styles.storeRight}>
+                  <Text style={styles.storeDistance}>{store.distance.toFixed(1)} km</Text>
+                  {selectedStores.includes(store.name) && (
+                    <Ionicons name="checkmark-circle" size={24} color={colors.success} />
+                  )}
+                </View>
               </TouchableOpacity>
             ))}
           </View>
         </Card>
 
-        <Card>
-          <View style={styles.mealPrepHeader}>
-            <View style={styles.mealPrepInfo}>
-              <Text style={styles.sectionTitle}>Matlådor</Text>
-              <Text style={styles.mealPrepDesc}>Få extra portioner för lunch och middag</Text>
-            </View>
-            <Switch
-              value={wantsMealPrep}
-              onValueChange={setWantsMealPrep}
-              trackColor={{ false: colors.border, true: colors.secondary }}
-              thumbColor={wantsMealPrep ? colors.primary : colors.cardBackground}
-            />
-          </View>
-          
-          {wantsMealPrep && (
-            <View style={styles.portionsCounter}>
-              <Text style={styles.portionsLabel}>Extra portioner</Text>
-              <View style={styles.counterButtons}>
-                <TouchableOpacity
-                  style={styles.counterButton}
-                  onPress={() => setMealPrepPortions(Math.max(1, mealPrepPortions - 1))}
-                >
-                  <Ionicons name="remove" size={20} color={colors.primary} />
-                </TouchableOpacity>
-                <Text style={styles.counterValue}>{mealPrepPortions}</Text>
-                <TouchableOpacity
-                  style={styles.counterButton}
-                  onPress={() => setMealPrepPortions(Math.min(10, mealPrepPortions + 1))}
-                >
-                  <Ionicons name="add" size={20} color={colors.primary} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        </Card>
-
-        <Card>
-          <View style={styles.storesHeader}>
-            <View>
-              <Text style={styles.sectionTitle}>
-                {showAllStores ? 'Alla butiker' : 'Butiker nära dig'}
-              </Text>
-              <Text style={styles.storesSubtitle}>
-                {showAllStores 
-                  ? `Visar alla ${allStores.length} butiker`
-                  : `${nearbyStores.length} butiker inom 15 km från ${params.city}`
-                }
-              </Text>
-            </View>
-            <Ionicons name="location" size={24} color={colors.secondary} />
-          </View>
-          
-          {/* Toggle knapp */}
-          <TouchableOpacity 
-            style={styles.toggleButton}
-            onPress={() => setShowAllStores(!showAllStores)}
-          >
-            <Ionicons 
-              name={showAllStores ? "navigate-circle" : "map"} 
-              size={20} 
-              color={colors.primary} 
-            />
-            <Text style={styles.toggleButtonText}>
-              {showAllStores ? 'Visa bara närliggande' : 'Se alla butiker på karta'}
-            </Text>
-          </TouchableOpacity>
-          
-          <View style={styles.storesContainer}>
-            {(showAllStores ? allStores : nearbyStores).length === 0 ? (
-              <View style={styles.emptyStores}>
-                <Ionicons name="information-circle-outline" size={40} color={colors.textLight} />
-                <Text style={styles.emptyStoresText}>
-                  Inga butiker hittades i närheten
-                </Text>
-              </View>
-            ) : (
-              (showAllStores ? allStores : nearbyStores).map((store, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={[
-                    styles.storeOption,
-                    selectedStores.includes(store.name) && styles.storeOptionSelected
-                  ]}
-                  onPress={() => toggleStore(store.name)}
-                >
-                  <View style={[
-                    styles.storeIconCircle, 
-                    { backgroundColor: STORE_COLORS[store.category] + '20' }
-                  ]}>
-                    <Ionicons 
-                      name="storefront" 
-                      size={24} 
-                      color={STORE_COLORS[store.category]} 
-                    />
-                  </View>
-                  <View style={styles.storeInfo}>
-                    <Text style={[
-                      styles.storeOptionText,
-                      selectedStores.includes(store.name) && styles.storeOptionTextSelected
-                    ]}>
-                      {store.name}
+        {/* Valda butiker */}
+        {selectedStores.length > 0 && (
+          <Card style={styles.selectedCard}>
+            <Text style={styles.selectedTitle}>Valda butiker ({selectedStores.length})</Text>
+            <View style={styles.selectedChips}>
+              {selectedStores.map(storeName => {
+                const store = [...nearbyStores, ...allStores].find(s => s.name === storeName);
+                return (
+                  <View 
+                    key={storeName}
+                    style={[styles.selectedChip, { backgroundColor: STORE_COLORS[store?.category || 'ICA'] + '20' }]}
+                  >
+                    <Text style={[styles.selectedChipText, { color: STORE_COLORS[store?.category || 'ICA'] }]}>
+                      {store?.category}
                     </Text>
-                    <Text style={styles.storeDistance}>
-                      {store.distance < 1 
-                        ? `${Math.round(store.distance * 1000)} m` 
-                        : `${store.distance.toFixed(1)} km`} bort
-                    </Text>
-                    <Text style={styles.storeAddress}>{store.address}</Text>
                   </View>
-                  {selectedStores.includes(store.name) && (
-                    <Ionicons name="checkmark-circle" size={24} color={colors.success} />
-                  )}
-                </TouchableOpacity>
-              ))
-            )}
-          </View>
-        </Card>
+                );
+              })}
+            </View>
+          </Card>
+        )}
       </ScrollView>
 
       <View style={styles.footer}>
@@ -280,10 +215,9 @@ export default function OnboardingStep3() {
           <View style={[styles.dot, styles.dotActive]} />
         </View>
         <Button 
-          title="Skapa matsedel" 
+          title={isSubmitting ? "Laddar..." : "Visa kampanjer"} 
           onPress={handleFinish}
-          disabled={selectedMeals.length === 0 || selectedStores.length === 0}
-          loading={isSubmitting}
+          disabled={selectedStores.length === 0 || isSubmitting}
         />
       </View>
     </SafeAreaView>
@@ -297,7 +231,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 24,
-    paddingBottom: 120,
+    paddingBottom: 140,
   },
   header: {
     marginBottom: 24,
@@ -318,172 +252,132 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.textLight,
   },
+  summaryCard: {
+    backgroundColor: colors.primaryLight + '10',
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
+    marginBottom: 16,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 6,
+  },
+  summaryText: {
+    fontSize: 14,
+    color: colors.text,
+    fontWeight: '500',
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: colors.text,
-    marginBottom: 16,
   },
-  optionsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  mealOption: {
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: colors.border,
-    backgroundColor: colors.background,
-    gap: 8,
-    minWidth: '45%',
-  },
-  mealOptionSelected: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryLight + '20',
-  },
-  mealOptionText: {
-    fontSize: 14,
-    color: colors.textLight,
-    fontWeight: '500',
-  },
-  mealOptionTextSelected: {
-    color: colors.text,
-    fontWeight: '600',
-  },
-  mealPrepHeader: {
+  storeHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  mealPrepInfo: {
-    flex: 1,
-  },
-  mealPrepDesc: {
-    fontSize: 14,
-    color: colors.textLight,
-    marginTop: -8,
-    marginBottom: 8,
-  },
-  portionsCounter: {
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  portionsLabel: {
-    fontSize: 14,
-    color: colors.textLight,
+    alignItems: 'center',
     marginBottom: 12,
   },
-  counterButtons: {
+  storeCount: {
+    fontSize: 14,
+    color: colors.textLight,
+  },
+  toggleAllButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: 6,
+    marginBottom: 16,
+    padding: 10,
+    backgroundColor: colors.primaryLight + '15',
+    borderRadius: 10,
+    alignSelf: 'flex-start',
   },
-  counterButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  counterValue: {
-    fontSize: 24,
-    fontWeight: '600',
+  toggleAllText: {
+    fontSize: 14,
     color: colors.primary,
-    minWidth: 40,
-    textAlign: 'center',
+    fontWeight: '500',
   },
-  storesHeader: {
+  storeList: {
+    gap: 10,
+  },
+  storeItem: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  storesSubtitle: {
-    fontSize: 14,
-    color: colors.textLight,
-    marginTop: 4,
-  },
-  toggleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    padding: 14,
     borderRadius: 12,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryLight + '10',
-    marginBottom: 16,
-    gap: 8,
-  },
-  toggleButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.primary,
-  },
-  storesContainer: {
-    gap: 12,
-  },
-  emptyStores: {
-    padding: 32,
-    alignItems: 'center',
-  },
-  emptyStoresText: {
-    fontSize: 14,
-    color: colors.textLight,
-    textAlign: 'center',
-    marginTop: 12,
-  },
-  storeOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: colors.border,
+    borderLeftWidth: 4,
     backgroundColor: colors.background,
-    gap: 12,
   },
-  storeOptionSelected: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryLight + '10',
-  },
-  storeIconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+  storeItemSelected: {
+    backgroundColor: colors.success + '08',
+    borderColor: colors.success,
   },
   storeInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 12,
+  },
+  storeIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  storeDetails: {
     flex: 1,
   },
-  storeOptionText: {
-    fontSize: 16,
-    color: colors.textLight,
-    fontWeight: '500',
-    marginBottom: 2,
-  },
-  storeOptionTextSelected: {
+  storeName: {
+    fontSize: 15,
+    fontWeight: '600',
     color: colors.text,
-    fontWeight: '600',
-  },
-  storeDistance: {
-    fontSize: 13,
-    color: colors.secondary,
-    fontWeight: '600',
     marginBottom: 2,
   },
   storeAddress: {
     fontSize: 12,
     color: colors.textLight,
+  },
+  storeRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  storeDistance: {
+    fontSize: 13,
+    color: colors.textLight,
+    fontWeight: '500',
+  },
+  selectedCard: {
+    marginTop: 16,
+    backgroundColor: colors.success + '10',
+    borderWidth: 1,
+    borderColor: colors.success + '30',
+  },
+  selectedTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 10,
+  },
+  selectedChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  selectedChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  selectedChipText: {
+    fontSize: 13,
+    fontWeight: '600',
   },
   footer: {
     position: 'absolute',

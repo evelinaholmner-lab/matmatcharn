@@ -170,7 +170,8 @@ export default function GeneratedMenuScreen() {
 
     try {
       const discounts: any[] = [];
-      userProfile.selectedStores.forEach(store => {
+      const stores = userProfile.selectedStores || ['ICA'];
+      stores.forEach(store => {
         const storeOffers = getFlyerOffersForStore(store);
         discounts.push(...storeOffers);
       });

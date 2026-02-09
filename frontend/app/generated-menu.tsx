@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -7,7 +7,10 @@ import {
   TouchableOpacity, 
   ActivityIndicator,
   Alert,
-  RefreshControl
+  RefreshControl,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -16,11 +19,9 @@ import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { colors } from './utils/colors';
 import { useAppStore } from './store';
-import { getCurrentWeekCampaigns } from './data/campaigns';
 
 // Get flyer offers for API
 const getFlyerOffersForStore = (store: string) => {
-  // Import offers from flyers data
   const storeFlyers: Record<string, any[]> = {
     'ICA': [
       { name: 'Kex Ballerina/Brago/Singoalla', price: '2 för 30 kr', discount: '-35%', store: 'ICA' },
@@ -122,12 +123,20 @@ const mealNames: Record<string, string> = {
   snack: 'Mellanmål'
 };
 
+interface ShoppingItemLocal {
+  id: string;
+  item: string;
+  amount: string;
+  price: string;
+  checked: boolean;
+  isManual?: boolean;
+}
+
 interface MenuData {
   weeklyMenu: Record<string, Record<string, string>>;
   shoppingList: Record<string, Array<{item: string; amount: string; price: string}>>;
   totalEstimate: string;
   savings: string;
-  recipeTips: Array<{title: string; ingredients: string[]; steps: string[]}>;
 }
 
 export default function GeneratedMenuScreen() {
@@ -136,9 +145,16 @@ export default function GeneratedMenuScreen() {
   const [menuData, setMenuData] = useState<MenuData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedDay, setSelectedDay] = useState('monday');
-  const [activeTab, setActiveTab] = useState<'menu' | 'shopping' | 'recipes'>('menu');
+  const [activeTab, setActiveTab] = useState<'menu' | 'shopping' | 'add'>('menu');
   const [refreshing, setRefreshing] = useState(false);
+  
+  // Checklist state
+  const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+  
+  // Manual items state
+  const [manualItems, setManualItems] = useState<ShoppingItemLocal[]>([]);
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemAmount, setNewItemAmount] = useState('');
 
   const API_URL = Constants.expoConfig?.extra?.EXPO_BACKEND_URL || '';
 
@@ -153,7 +169,6 @@ export default function GeneratedMenuScreen() {
     setError(null);
 
     try {
-      // Collect all discounts for selected stores
       const discounts: any[] = [];
       userProfile.selectedStores.forEach(store => {
         const storeOffers = getFlyerOffersForStore(store);
@@ -167,10 +182,13 @@ export default function GeneratedMenuScreen() {
         },
         body: JSON.stringify({
           numberOfPeople: userProfile.numberOfPeople,
-          dietaryPreference: userProfile.dietaryPreference,
+          dietaryPreferences: userProfile.dietaryPreferences,
           allergies: userProfile.allergies,
           location: userProfile.location,
           selectedStores: userProfile.selectedStores,
+          selectedMeals: userProfile.selectedMeals,
+          lunchboxCount: userProfile.lunchboxCount,
+          wantsBatchCooking: userProfile.wantsBatchCooking,
           discounts: discounts
         })
       });
@@ -199,6 +217,58 @@ export default function GeneratedMenuScreen() {
     generateMenu();
   };
 
+  const toggleItemCheck = useCallback((itemId: string) => {
+    setCheckedItems(prev => ({
+      ...prev,
+      [itemId]: !prev[itemId]
+    }));
+  }, []);
+
+  const toggleManualItemCheck = useCallback((itemId: string) => {
+    setManualItems(prev => prev.map(item => 
+      item.id === itemId ? { ...item, checked: !item.checked } : item
+    ));
+  }, []);
+
+  const addManualItem = useCallback(() => {
+    if (!newItemName.trim()) return;
+    
+    const newItem: ShoppingItemLocal = {
+      id: `manual-${Date.now()}`,
+      item: newItemName.trim(),
+      amount: newItemAmount.trim() || '1 st',
+      price: '',
+      checked: false,
+      isManual: true
+    };
+    
+    setManualItems(prev => [...prev, newItem]);
+    setNewItemName('');
+    setNewItemAmount('');
+    setActiveTab('shopping');
+  }, [newItemName, newItemAmount]);
+
+  const removeManualItem = useCallback((itemId: string) => {
+    setManualItems(prev => prev.filter(item => item.id !== itemId));
+  }, []);
+
+  // Calculate checked counts
+  const getCheckedStats = () => {
+    if (!menuData?.shoppingList) return { checked: 0, total: 0 };
+    
+    let total = manualItems.length;
+    let checked = manualItems.filter(i => i.checked).length;
+    
+    Object.entries(menuData.shoppingList).forEach(([store, items]) => {
+      items.forEach((item, index) => {
+        total++;
+        if (checkedItems[`${store}-${index}`]) checked++;
+      });
+    });
+    
+    return { checked, total };
+  };
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -223,12 +293,14 @@ export default function GeneratedMenuScreen() {
             <Text style={styles.retryButtonText}>Försök igen</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.skipButton} onPress={() => router.replace('/weekly-plan')}>
-            <Text style={styles.skipButtonText}>Gå till inköpslista istället</Text>
+            <Text style={styles.skipButtonText}>Gå till kampanjer istället</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
   }
+
+  const stats = getCheckedStats();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -267,142 +339,207 @@ export default function GeneratedMenuScreen() {
           onPress={() => setActiveTab('menu')}
         >
           <Ionicons name="calendar" size={20} color={activeTab === 'menu' ? colors.primary : colors.textLight} />
-          <Text style={[styles.tabText, activeTab === 'menu' && styles.activeTabText]}>Meny</Text>
+          <Text style={[styles.tabText, activeTab === 'menu' && styles.activeTabText]}>Veckomeny</Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={[styles.tab, activeTab === 'shopping' && styles.activeTab]}
           onPress={() => setActiveTab('shopping')}
         >
-          <Ionicons name="cart" size={20} color={activeTab === 'shopping' ? colors.primary : colors.textLight} />
-          <Text style={[styles.tabText, activeTab === 'shopping' && styles.activeTabText]}>Inköpslista</Text>
+          <Ionicons name="checkbox" size={20} color={activeTab === 'shopping' ? colors.primary : colors.textLight} />
+          <Text style={[styles.tabText, activeTab === 'shopping' && styles.activeTabText]}>
+            Inköp ({stats.checked}/{stats.total})
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity 
-          style={[styles.tab, activeTab === 'recipes' && styles.activeTab]}
-          onPress={() => setActiveTab('recipes')}
+          style={[styles.tab, activeTab === 'add' && styles.activeTab]}
+          onPress={() => setActiveTab('add')}
         >
-          <Ionicons name="book" size={20} color={activeTab === 'recipes' ? colors.primary : colors.textLight} />
-          <Text style={[styles.tabText, activeTab === 'recipes' && styles.activeTabText]}>Recept</Text>
+          <Ionicons name="add-circle" size={20} color={activeTab === 'add' ? colors.primary : colors.textLight} />
+          <Text style={[styles.tabText, activeTab === 'add' && styles.activeTabText]}>Lägg till</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView 
+      <KeyboardAvoidingView 
         style={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {activeTab === 'menu' && menuData?.weeklyMenu && (
-          <>
-            {/* Day Selector */}
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false}
-              style={styles.daySelector}
-              contentContainerStyle={styles.daySelectorContent}
-            >
-              {Object.keys(dayNames).map((day) => (
-                <TouchableOpacity
-                  key={day}
-                  style={[styles.dayButton, selectedDay === day && styles.selectedDayButton]}
-                  onPress={() => setSelectedDay(day)}
-                >
-                  <Text style={[styles.dayButtonText, selectedDay === day && styles.selectedDayButtonText]}>
-                    {dayNames[day]}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            {/* Meals for Selected Day */}
-            <View style={styles.mealsContainer}>
-              {menuData.weeklyMenu[selectedDay] && Object.entries(menuData.weeklyMenu[selectedDay]).map(([meal, description]) => (
-                <View key={meal} style={styles.mealCard}>
-                  <View style={styles.mealHeader}>
-                    <View style={styles.mealIconContainer}>
-                      <Ionicons 
-                        name={mealIcons[meal] as any || 'restaurant-outline'} 
-                        size={24} 
-                        color={colors.primary} 
-                      />
-                    </View>
-                    <Text style={styles.mealTitle}>{mealNames[meal] || meal}</Text>
-                  </View>
-                  <Text style={styles.mealDescription}>{description}</Text>
-                </View>
-              ))}
-            </View>
-          </>
-        )}
-
-        {activeTab === 'shopping' && menuData?.shoppingList && (
-          <View style={styles.shoppingContainer}>
-            <View style={styles.totalBanner}>
-              <Text style={styles.totalLabel}>Uppskattad totalkostnad:</Text>
-              <Text style={styles.totalAmount}>{menuData.totalEstimate}</Text>
-            </View>
-            
-            {Object.entries(menuData.shoppingList).map(([store, items]) => (
-              <View key={store} style={styles.storeSection}>
-                <View style={styles.storeHeader}>
-                  <Ionicons name="storefront" size={20} color={colors.primary} />
-                  <Text style={styles.storeName}>{store}</Text>
-                  <Text style={styles.itemCount}>{items.length} varor</Text>
-                </View>
-                {items.map((item, index) => (
-                  <View key={index} style={styles.shoppingItem}>
-                    <View style={styles.shoppingItemLeft}>
-                      <Text style={styles.shoppingItemName}>{item.item}</Text>
-                      <Text style={styles.shoppingItemAmount}>{item.amount}</Text>
-                    </View>
-                    <Text style={styles.shoppingItemPrice}>{item.price}</Text>
-                  </View>
-                ))}
-              </View>
-            ))}
-          </View>
-        )}
-
-        {activeTab === 'recipes' && menuData?.recipeTips && (
-          <View style={styles.recipesContainer}>
-            {menuData.recipeTips.map((recipe, index) => (
-              <View key={index} style={styles.recipeCard}>
-                <Text style={styles.recipeTitle}>{recipe.title}</Text>
-                
-                <View style={styles.ingredientsSection}>
-                  <Text style={styles.sectionLabel}>Ingredienser:</Text>
-                  {recipe.ingredients.map((ing, i) => (
-                    <View key={i} style={styles.ingredientRow}>
-                      <Ionicons name="checkmark-circle" size={16} color={colors.primary} />
-                      <Text style={styles.ingredientText}>{ing}</Text>
-                    </View>
-                  ))}
-                </View>
-
-                <View style={styles.stepsSection}>
-                  <Text style={styles.sectionLabel}>Gör så här:</Text>
-                  {recipe.steps.map((step, i) => (
-                    <View key={i} style={styles.stepRow}>
-                      <View style={styles.stepNumber}>
-                        <Text style={styles.stepNumberText}>{i + 1}</Text>
-                      </View>
-                      <Text style={styles.stepText}>{step}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-      </ScrollView>
-
-      {/* Bottom Action */}
-      <View style={styles.bottomAction}>
-        <TouchableOpacity 
-          style={styles.primaryButton}
-          onPress={() => router.replace('/shopping-list')}
+        <ScrollView 
+          style={styles.scrollView}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          keyboardShouldPersistTaps="handled"
         >
-          <Ionicons name="cart" size={20} color="#fff" />
-          <Text style={styles.primaryButtonText}>Gå till inköpslistan</Text>
-        </TouchableOpacity>
-      </View>
+          {/* MENU TAB - All days in one view */}
+          {activeTab === 'menu' && menuData?.weeklyMenu && (
+            <View style={styles.menuContainer}>
+              {Object.entries(dayNames).map(([dayKey, dayLabel]) => (
+                <View key={dayKey} style={styles.daySection}>
+                  <View style={styles.dayHeader}>
+                    <Text style={styles.dayTitle}>{dayLabel}</Text>
+                  </View>
+                  
+                  {menuData.weeklyMenu[dayKey] && (
+                    <View style={styles.mealsGrid}>
+                      {Object.entries(menuData.weeklyMenu[dayKey]).map(([meal, description]) => (
+                        <View key={meal} style={styles.mealCard}>
+                          <View style={styles.mealHeader}>
+                            <View style={styles.mealIconContainer}>
+                              <Ionicons 
+                                name={mealIcons[meal] as any || 'restaurant-outline'} 
+                                size={18} 
+                                color={colors.primary} 
+                              />
+                            </View>
+                            <Text style={styles.mealTitle}>{mealNames[meal] || meal}</Text>
+                          </View>
+                          <Text style={styles.mealDescription} numberOfLines={3}>{description}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* SHOPPING TAB - Checklist */}
+          {activeTab === 'shopping' && menuData?.shoppingList && (
+            <View style={styles.shoppingContainer}>
+              <View style={styles.totalBanner}>
+                <View>
+                  <Text style={styles.totalLabel}>Uppskattad totalkostnad</Text>
+                  <Text style={styles.totalAmount}>{menuData.totalEstimate}</Text>
+                </View>
+                <View style={styles.progressCircle}>
+                  <Text style={styles.progressText}>{Math.round((stats.checked / stats.total) * 100)}%</Text>
+                </View>
+              </View>
+              
+              {/* Manual items first */}
+              {manualItems.length > 0 && (
+                <View style={styles.storeSection}>
+                  <View style={styles.storeHeader}>
+                    <Ionicons name="person" size={20} color={colors.primary} />
+                    <Text style={styles.storeName}>Egna varor</Text>
+                    <Text style={styles.itemCount}>{manualItems.length} varor</Text>
+                  </View>
+                  {manualItems.map((item) => (
+                    <TouchableOpacity 
+                      key={item.id} 
+                      style={styles.shoppingItem}
+                      onPress={() => toggleManualItemCheck(item.id)}
+                    >
+                      <View style={[styles.checkbox, item.checked && styles.checkboxChecked]}>
+                        {item.checked && <Ionicons name="checkmark" size={16} color="#fff" />}
+                      </View>
+                      <View style={styles.shoppingItemLeft}>
+                        <Text style={[styles.shoppingItemName, item.checked && styles.itemCheckedText]}>
+                          {item.item}
+                        </Text>
+                        <Text style={styles.shoppingItemAmount}>{item.amount}</Text>
+                      </View>
+                      <TouchableOpacity 
+                        style={styles.deleteButton}
+                        onPress={() => removeManualItem(item.id)}
+                      >
+                        <Ionicons name="trash-outline" size={18} color={colors.error} />
+                      </TouchableOpacity>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+
+              {/* Store items */}
+              {Object.entries(menuData.shoppingList).map(([store, items]) => (
+                <View key={store} style={styles.storeSection}>
+                  <View style={styles.storeHeader}>
+                    <Ionicons name="storefront" size={20} color={colors.primary} />
+                    <Text style={styles.storeName}>{store}</Text>
+                    <Text style={styles.itemCount}>{items.length} varor</Text>
+                  </View>
+                  {items.map((item, index) => {
+                    const itemId = `${store}-${index}`;
+                    const isChecked = checkedItems[itemId];
+                    return (
+                      <TouchableOpacity 
+                        key={index} 
+                        style={styles.shoppingItem}
+                        onPress={() => toggleItemCheck(itemId)}
+                      >
+                        <View style={[styles.checkbox, isChecked && styles.checkboxChecked]}>
+                          {isChecked && <Ionicons name="checkmark" size={16} color="#fff" />}
+                        </View>
+                        <View style={styles.shoppingItemLeft}>
+                          <Text style={[styles.shoppingItemName, isChecked && styles.itemCheckedText]}>
+                            {item.item}
+                          </Text>
+                          <Text style={styles.shoppingItemAmount}>{item.amount}</Text>
+                        </View>
+                        <Text style={[styles.shoppingItemPrice, isChecked && styles.itemCheckedText]}>
+                          {item.price}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* ADD TAB - Add manual items */}
+          {activeTab === 'add' && (
+            <View style={styles.addContainer}>
+              <View style={styles.addCard}>
+                <Text style={styles.addTitle}>Lägg till egen vara</Text>
+                <Text style={styles.addHint}>Lägg till varor som inte finns i den genererade listan</Text>
+                
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Vara *</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="T.ex. Mjölk"
+                    value={newItemName}
+                    onChangeText={setNewItemName}
+                    returnKeyType="next"
+                  />
+                </View>
+                
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputLabel}>Mängd (valfritt)</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="T.ex. 2 liter"
+                    value={newItemAmount}
+                    onChangeText={setNewItemAmount}
+                    returnKeyType="done"
+                    onSubmitEditing={addManualItem}
+                  />
+                </View>
+                
+                <TouchableOpacity 
+                  style={[styles.addButton, !newItemName.trim() && styles.addButtonDisabled]}
+                  onPress={addManualItem}
+                  disabled={!newItemName.trim()}
+                >
+                  <Ionicons name="add" size={20} color="#fff" />
+                  <Text style={styles.addButtonText}>Lägg till i listan</Text>
+                </TouchableOpacity>
+              </View>
+
+              {manualItems.length > 0 && (
+                <View style={styles.manualListPreview}>
+                  <Text style={styles.previewTitle}>Dina tillagda varor ({manualItems.length})</Text>
+                  {manualItems.map(item => (
+                    <View key={item.id} style={styles.previewItem}>
+                      <Text style={styles.previewItemText}>{item.item}</Text>
+                      <Text style={styles.previewItemAmount}>{item.amount}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -411,6 +548,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  content: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
   },
   loadingContainer: {
     flex: 1,
@@ -524,78 +667,65 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.primary,
   },
   tabText: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.textLight,
   },
   activeTabText: {
     color: colors.primary,
     fontWeight: '600',
   },
-  content: {
-    flex: 1,
-  },
-  daySelector: {
-    backgroundColor: colors.cardBackground,
-    maxHeight: 60,
-  },
-  daySelectorContent: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    gap: 8,
-  },
-  dayButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: colors.background,
-    marginRight: 8,
-  },
-  selectedDayButton: {
-    backgroundColor: colors.primary,
-  },
-  dayButtonText: {
-    fontSize: 14,
-    color: colors.text,
-    fontWeight: '500',
-  },
-  selectedDayButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  mealsContainer: {
+  // Menu styles
+  menuContainer: {
     padding: 16,
-    gap: 12,
+  },
+  daySection: {
+    marginBottom: 20,
+  },
+  dayHeader: {
+    marginBottom: 12,
+    paddingBottom: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: colors.primary,
+  },
+  dayTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  mealsGrid: {
+    gap: 10,
   },
   mealCard: {
     backgroundColor: colors.cardBackground,
     borderRadius: 12,
-    padding: 16,
+    padding: 14,
   },
   mealHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 8,
+    gap: 10,
+    marginBottom: 6,
   },
   mealIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: colors.primary + '15',
     justifyContent: 'center',
     alignItems: 'center',
   },
   mealTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
     color: colors.text,
   },
   mealDescription: {
-    fontSize: 14,
+    fontSize: 13,
     color: colors.textLight,
-    lineHeight: 20,
-    marginLeft: 52,
+    lineHeight: 18,
+    marginLeft: 42,
   },
+  // Shopping styles
   shoppingContainer: {
     padding: 16,
   },
@@ -613,9 +743,22 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   totalAmount: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '700',
     color: colors.primary,
+  },
+  progressCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
   },
   storeSection: {
     backgroundColor: colors.cardBackground,
@@ -644,9 +787,22 @@ const styles = StyleSheet.create({
   },
   shoppingItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 10,
+    gap: 12,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkboxChecked: {
+    backgroundColor: colors.success,
+    borderColor: colors.success,
   },
   shoppingItemLeft: {
     flex: 1,
@@ -654,6 +810,11 @@ const styles = StyleSheet.create({
   shoppingItemName: {
     fontSize: 14,
     color: colors.text,
+    fontWeight: '500',
+  },
+  itemCheckedText: {
+    textDecorationLine: 'line-through',
+    color: colors.textLight,
   },
   shoppingItemAmount: {
     fontSize: 12,
@@ -664,84 +825,91 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.primary,
   },
-  recipesContainer: {
-    padding: 16,
-    gap: 16,
+  deleteButton: {
+    padding: 8,
   },
-  recipeCard: {
+  // Add tab styles
+  addContainer: {
+    padding: 16,
+  },
+  addCard: {
     backgroundColor: colors.cardBackground,
     borderRadius: 12,
-    padding: 16,
+    padding: 20,
   },
-  recipeTitle: {
+  addTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: colors.text,
+    marginBottom: 4,
+  },
+  addHint: {
+    fontSize: 14,
+    color: colors.textLight,
+    marginBottom: 20,
+  },
+  inputGroup: {
     marginBottom: 16,
   },
-  sectionLabel: {
+  inputLabel: {
     fontSize: 14,
     fontWeight: '600',
     color: colors.text,
     marginBottom: 8,
   },
-  ingredientsSection: {
-    marginBottom: 16,
+  input: {
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
+    color: colors.text,
   },
-  ingredientRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 4,
-  },
-  ingredientText: {
-    fontSize: 14,
-    color: colors.textLight,
-  },
-  stepsSection: {},
-  stepRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-    paddingVertical: 8,
-  },
-  stepNumber: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  stepNumberText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  stepText: {
-    flex: 1,
-    fontSize: 14,
-    color: colors.textLight,
-    lineHeight: 20,
-  },
-  bottomAction: {
-    padding: 16,
-    backgroundColor: colors.cardBackground,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  primaryButton: {
+  addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: 14,
+    borderRadius: 10,
     gap: 8,
+    marginTop: 8,
   },
-  primaryButtonText: {
+  addButtonDisabled: {
+    backgroundColor: colors.border,
+  },
+  addButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  manualListPreview: {
+    marginTop: 20,
+    backgroundColor: colors.cardBackground,
+    borderRadius: 12,
+    padding: 16,
+  },
+  previewTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 12,
+  },
+  previewItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  previewItemText: {
+    fontSize: 14,
+    color: colors.text,
+  },
+  previewItemAmount: {
+    fontSize: 14,
+    color: colors.textLight,
   },
 });

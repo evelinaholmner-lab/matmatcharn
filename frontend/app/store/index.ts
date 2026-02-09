@@ -80,16 +80,31 @@ const matchesPreferences = (
   }
   
   // Kolla kostpreferenser
-  if (dietaryPreference === 'pescetariansk') {
-    // Ingen kött
+  // Om vegan - ingen animalisk produkt
+  if (dietaryPreferences.includes('vegan')) {
+    if (['kyckling', 'nötfärs', 'fläsk', 'bacon', 'korv', 'falukorv', 'skinka', 'högrev', 'pulled pork', 
+         'köttfärs', 'lamm', 'kalv', 'kött', 'lax', 'torsk', 'sill', 'fisk', 'räkor', 'ägg', 
+         'mjölk', 'ost', 'grädde', 'smör', 'yoghurt'].some(k => name.includes(k))) {
+      return false;
+    }
+  }
+  // Om vegetarian - ingen kött eller fisk
+  if (dietaryPreferences.includes('vegetarian')) {
+    if (['kyckling', 'nötfärs', 'fläsk', 'bacon', 'korv', 'falukorv', 'skinka', 'högrev', 'pulled pork', 
+         'köttfärs', 'lamm', 'kalv', 'kött', 'lax', 'torsk', 'sill', 'fisk', 'räkor'].some(k => name.includes(k))) {
+      return false;
+    }
+  }
+  // Om pescetariansk - ingen kött
+  if (dietaryPreferences.includes('pescetariansk')) {
     if (['kyckling', 'nötfärs', 'fläsk', 'bacon', 'korv', 'falukorv', 'skinka', 'högrev', 'pulled pork', 
          'köttfärs', 'lamm', 'kalv', 'kött'].some(k => name.includes(k))) {
       return false;
     }
   }
-  if (dietaryPreference === 'flexitariansk') {
-    // Prioritera icke-kött, men filtrera inte bort
-    // Returnerar true men kan sorteras lägre
+  // Om keto/lchf - tillåt allt förutom kolhydratrika
+  if (dietaryPreferences.includes('keto') || dietaryPreferences.includes('lchf')) {
+    // Filtrera inte bort, men kan användas för sortering senare
   }
   
   return true;

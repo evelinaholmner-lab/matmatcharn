@@ -45,43 +45,45 @@ const getIngredientCategory = (ingredientName: string): IngredientCategory => {
 // Kontrollera om en produkt matchar användarens preferenser
 const matchesPreferences = (
   campaign: any,
-  dietaryPreferences: DietaryPreference[],
-  allergies: Allergen[]
+  dietaryPreferences: DietaryPreference[] | undefined,
+  allergies: Allergen[] | undefined
 ): boolean => {
   const name = campaign.ingredient.toLowerCase();
+  const prefs = dietaryPreferences || ['allatare'];
+  const allergyList = allergies || [];
   
   // Kolla allergier
-  if (allergies.includes('gluten') && ['pasta', 'bröd', 'nudlar', 'mjöl', 'knäckebröd'].some(k => name.includes(k))) {
+  if (allergyList.includes('gluten') && ['pasta', 'bröd', 'nudlar', 'mjöl', 'knäckebröd'].some(k => name.includes(k))) {
     return false;
   }
-  if (allergies.includes('laktos') && ['mjölk', 'grädde', 'yoghurt', 'ost', 'smör'].some(k => name.includes(k))) {
+  if (allergyList.includes('laktos') && ['mjölk', 'grädde', 'yoghurt', 'ost', 'smör'].some(k => name.includes(k))) {
     return false;
   }
-  if (allergies.includes('mjolkprotein') && ['mjölk', 'ost', 'grädde', 'yoghurt', 'smör', 'cream'].some(k => name.includes(k))) {
+  if (allergyList.includes('mjolkprotein') && ['mjölk', 'ost', 'grädde', 'yoghurt', 'smör', 'cream'].some(k => name.includes(k))) {
     return false;
   }
-  if (allergies.includes('agg') && ['ägg'].some(k => name.includes(k))) {
+  if (allergyList.includes('agg') && ['ägg'].some(k => name.includes(k))) {
     return false;
   }
-  if (allergies.includes('notter') && ['nöt', 'mandel', 'cashew', 'jordnöt'].some(k => name.includes(k))) {
+  if (allergyList.includes('notter') && ['nöt', 'mandel', 'cashew', 'jordnöt'].some(k => name.includes(k))) {
     return false;
   }
-  if (allergies.includes('soja') && ['soja', 'tofu', 'edamame'].some(k => name.includes(k))) {
+  if (allergyList.includes('soja') && ['soja', 'tofu', 'edamame'].some(k => name.includes(k))) {
     return false;
   }
-  if (allergies.includes('fisk') && ['lax', 'torsk', 'sill', 'fisk', 'sej', 'tonfisk'].some(k => name.includes(k))) {
+  if (allergyList.includes('fisk') && ['lax', 'torsk', 'sill', 'fisk', 'sej', 'tonfisk'].some(k => name.includes(k))) {
     return false;
   }
-  if (allergies.includes('skaldjur') && ['räkor', 'räk', 'krabba', 'hummer', 'skaldjur'].some(k => name.includes(k))) {
+  if (allergyList.includes('skaldjur') && ['räkor', 'räk', 'krabba', 'hummer', 'skaldjur'].some(k => name.includes(k))) {
     return false;
   }
-  if (allergies.includes('sesam') && ['sesam'].some(k => name.includes(k))) {
+  if (allergyList.includes('sesam') && ['sesam'].some(k => name.includes(k))) {
     return false;
   }
   
   // Kolla kostpreferenser
   // Om vegan - ingen animalisk produkt
-  if (dietaryPreferences.includes('vegan')) {
+  if (prefs.includes('vegan')) {
     if (['kyckling', 'nötfärs', 'fläsk', 'bacon', 'korv', 'falukorv', 'skinka', 'högrev', 'pulled pork', 
          'köttfärs', 'lamm', 'kalv', 'kött', 'lax', 'torsk', 'sill', 'fisk', 'räkor', 'ägg', 
          'mjölk', 'ost', 'grädde', 'smör', 'yoghurt'].some(k => name.includes(k))) {
@@ -89,21 +91,21 @@ const matchesPreferences = (
     }
   }
   // Om vegetarian - ingen kött eller fisk
-  if (dietaryPreferences.includes('vegetarian')) {
+  if (prefs.includes('vegetarian')) {
     if (['kyckling', 'nötfärs', 'fläsk', 'bacon', 'korv', 'falukorv', 'skinka', 'högrev', 'pulled pork', 
          'köttfärs', 'lamm', 'kalv', 'kött', 'lax', 'torsk', 'sill', 'fisk', 'räkor'].some(k => name.includes(k))) {
       return false;
     }
   }
   // Om pescetariansk - ingen kött
-  if (dietaryPreferences.includes('pescetariansk')) {
+  if (prefs.includes('pescetariansk')) {
     if (['kyckling', 'nötfärs', 'fläsk', 'bacon', 'korv', 'falukorv', 'skinka', 'högrev', 'pulled pork', 
          'köttfärs', 'lamm', 'kalv', 'kött'].some(k => name.includes(k))) {
       return false;
     }
   }
   // Om keto/lchf - tillåt allt förutom kolhydratrika
-  if (dietaryPreferences.includes('keto') || dietaryPreferences.includes('lchf')) {
+  if (prefs.includes('keto') || prefs.includes('lchf')) {
     // Filtrera inte bort, men kan användas för sortering senare
   }
   

@@ -215,7 +215,7 @@ export default function OnboardingStep3() {
           <View style={[styles.dot, styles.dotActive]} />
         </View>
         <Button 
-          title={isSubmitting ? "Laddar..." : "Visa kampanjer"} 
+          title={isSubmitting ? "Genererar meny..." : "Skapa veckomeny"} 
           onPress={handleFinish}
           disabled={selectedStores.length === 0 || isSubmitting}
         />

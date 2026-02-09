@@ -7,7 +7,7 @@ import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { colors } from '../utils/colors';
 import { useAppStore } from '../store';
-import { DietaryPreference, Allergen } from '../types';
+import { DietaryPreference, Allergen, MealType } from '../types';
 import { Ionicons } from '@expo/vector-icons';
 import { findNearbyStores, StoreLocation } from '../data/stores';
 
@@ -68,8 +68,11 @@ export default function OnboardingStep3() {
     setIsSubmitting(true);
 
     const numberOfPeople = parseInt(params.numberOfPeople as string) || 2;
-    const dietaryPreference = params.dietaryPreference as DietaryPreference || 'allatare';
+    const dietaryPreferences = params.dietaryPreferences ? JSON.parse(params.dietaryPreferences as string) as DietaryPreference[] : ['allatare'];
     const allergies = params.allergies ? JSON.parse(params.allergies as string) as Allergen[] : [];
+    const selectedMeals = params.selectedMeals ? JSON.parse(params.selectedMeals as string) as MealType[] : ['frukost', 'lunch', 'middag'];
+    const lunchboxCount = parseInt(params.lunchboxCount as string) || 0;
+    const wantsBatchCooking = params.wantsBatchCooking === 'true';
     const address = params.address as string;
 
     // Konvertera specifika butiksnamn till kategorier för kampanjer
@@ -83,10 +86,13 @@ export default function OnboardingStep3() {
 
     const profile = {
       numberOfPeople,
-      dietaryPreference,
+      dietaryPreferences,
       allergies,
       location: address,
       selectedStores: uniqueStores,
+      selectedMeals,
+      lunchboxCount,
+      wantsBatchCooking,
       onboardingCompleted: true,
     };
 
@@ -97,6 +103,12 @@ export default function OnboardingStep3() {
   };
 
   const displayedStores = showAllStores ? allStores : nearbyStores;
+
+  // Parse params for summary
+  const dietaryPreferences = params.dietaryPreferences ? JSON.parse(params.dietaryPreferences as string) : ['allatare'];
+  const selectedMeals = params.selectedMeals ? JSON.parse(params.selectedMeals as string) : ['frukost', 'lunch', 'middag'];
+  const lunchboxCount = parseInt(params.lunchboxCount as string) || 0;
+  const wantsBatchCooking = params.wantsBatchCooking === 'true';
 
   return (
     <SafeAreaView style={styles.container}>
@@ -119,10 +131,27 @@ export default function OnboardingStep3() {
           <View style={styles.summaryRow}>
             <Ionicons name="restaurant" size={18} color={colors.primary} />
             <Text style={styles.summaryText}>
-              {params.dietaryPreference === 'pescetariansk' ? 'Pescetarian' : 
-               params.dietaryPreference === 'flexitariansk' ? 'Flexitarian' : 'Allätare'}
+              {dietaryPreferences.join(', ')}
             </Text>
           </View>
+          <View style={styles.summaryRow}>
+            <Ionicons name="time" size={18} color={colors.primary} />
+            <Text style={styles.summaryText}>
+              {selectedMeals.length} måltider/dag
+            </Text>
+          </View>
+          {lunchboxCount > 0 && (
+            <View style={styles.summaryRow}>
+              <Ionicons name="briefcase" size={18} color={colors.primary} />
+              <Text style={styles.summaryText}>{lunchboxCount} matlåda/dag</Text>
+            </View>
+          )}
+          {wantsBatchCooking && (
+            <View style={styles.summaryRow}>
+              <Ionicons name="layers" size={18} color={colors.success} />
+              <Text style={styles.summaryText}>Batch-lagning aktiverad</Text>
+            </View>
+          )}
           <View style={styles.summaryRow}>
             <Ionicons name="location" size={18} color={colors.primary} />
             <Text style={styles.summaryText}>{params.city || 'Umeå'}</Text>

@@ -17,122 +17,344 @@ const getWeekDates = (weekOffset: number = 0) => {
   return { start: weekStart, end: weekEnd };
 };
 
-// Denna vecka (vecka 6)
+// Denna vecka (vecka 7: 9-15 februari 2025)
 const thisWeek = getWeekDates(0);
-const week6End = thisWeek.end;
+const week7End = thisWeek.end;
 
-// Nästa vecka (vecka 7)
+// Nästa vecka (vecka 8)
 const nextWeek = getWeekDates(1);
-const week7End = nextWeek.end;
-
-// Om två veckor (vecka 8)
-const weekAfterNext = getWeekDates(2);
-const week8End = weekAfterNext.end;
+const week8End = nextWeek.end;
 
 export const campaigns: Campaign[] = [
-  // ==================== DENNA VECKA (Vecka 6) ====================
+  // ==================== VECKA 7 (9-15 februari 2025) ====================
   
-  // ICA Supermarket - Vecka 6 (RIKTIGA erbjudanden)
-  { store: 'ICA', ingredient: 'Cheddar', discount: 35, validUntil: week6End },       // Riven Cheddar & Mozzarella 20 kr
-  { store: 'ICA', ingredient: 'Mozzarella', discount: 35, validUntil: week6End },    // Riven Cheddar & Mozzarella 20 kr
-  { store: 'ICA', ingredient: 'Tomat', discount: 30, validUntil: week6End },         // Tomater 25 kr/pk
-  { store: 'ICA', ingredient: 'Päron', discount: 40, validUntil: week6End },         // Päron 15 kr/kg
-  { store: 'ICA', ingredient: 'Havredryck', discount: 30, validUntil: week6End },    // Oatly iKaffe 2 för 30 kr
-  { store: 'ICA', ingredient: 'Mango', discount: 35, validUntil: week6End },         // Mogen mango 2 för 25 kr
-  { store: 'ICA', ingredient: 'Ärtor', discount: 25, validUntil: week6End },         // Ärtor majs & paprika 2 för 40 kr
-
-  // Coop - Vecka 6 (RIKTIGA erbjudanden)
-  { store: 'Coop', ingredient: 'Yoghurt', discount: 35, validUntil: week6End },      // Arla Yoghurt 2 för 35 kr
-  { store: 'Coop', ingredient: 'Apelsin', discount: 40, validUntil: week6End },      // Apelsiner 17 kr/kg
-  { store: 'Coop', ingredient: 'Bacon', discount: 30, validUntil: week6End },        // Scan Baconskivor 39,90 kr
-  { store: 'Coop', ingredient: 'Knäckebröd', discount: 25, validUntil: week6End },   // Sport Knäckebröd 2 för 39 kr
-  { store: 'Coop', ingredient: 'Bröd', discount: 25, validUntil: week6End },         // Skogaholmslimpa 22,90 kr
-  { store: 'Coop', ingredient: 'Havredryck', discount: 30, validUntil: week6End },   // Oatly iKaffe 2 för 35 kr
-
-  // Willys - Vecka 6 (RIKTIGA erbjudanden)
-  { store: 'Willys', ingredient: 'Ost', discount: 30, validUntil: week6End },        // Gouda Familjefavoriter 79,90 kr/kg
-  { store: 'Willys', ingredient: 'Falukorv', discount: 45, validUntil: week6End },   // Falukorv 19,90 kr (ord 35,90)
-  { store: 'Willys', ingredient: 'Högrev', discount: 30, validUntil: week6End },     // Högrev Nötkött 118 kr/kg
-  { store: 'Willys', ingredient: 'Nötfärs', discount: 30, validUntil: week6End },    // Högrev Nötkött
-  { store: 'Willys', ingredient: 'Vitkål', discount: 60, validUntil: week6End },     // Vitkål 4,90 kr/kg (ord 12,90)
-  { store: 'Willys', ingredient: 'Kål', discount: 60, validUntil: week6End },        // Vitkål
-  { store: 'Willys', ingredient: 'Kokosgrädde', discount: 30, validUntil: week6End }, // Kokosgrädde 2 för 24 kr
-  { store: 'Willys', ingredient: 'Kokosmjölk', discount: 30, validUntil: week6End }, // Kokosgrädde
-  { store: 'Willys', ingredient: 'Vårrullar', discount: 40, validUntil: week6End },  // Daloon Vårrullar 29,90 kr
-  { store: 'Willys', ingredient: 'Risnudlar', discount: 25, validUntil: week6End },  // Rice Noodles 17,90 kr
-  { store: 'Willys', ingredient: 'Blåbär', discount: 25, validUntil: week6End },     // Proviva Blåbär 24,90 kr
-
-  // Lidl - Vecka 6 (RIKTIGA erbjudanden från reklamblad 2/2-8/2)
-  // Frukt & Grönt
-  { store: 'Lidl', ingredient: 'Lök', discount: 50, validUntil: week6End },           // Gul lök 5,90 kr/kg - Superpris
-  { store: 'Lidl', ingredient: 'Ananas', discount: 40, validUntil: week6End },        // 16,90 kr med Lidl Plus
-  { store: 'Lidl', ingredient: 'Päron', discount: 35, validUntil: week6End },         // 17,90 kr/kg
-  { store: 'Lidl', ingredient: 'Jordgubbar', discount: 30, validUntil: week6End },    // 39,90 kr / 400g
-  { store: 'Lidl', ingredient: 'Vitlök', discount: 25, validUntil: week6End },        // 19,90 kr / 250g
-  { store: 'Lidl', ingredient: 'Spenat', discount: 30, validUntil: week6End },        // 24,90 kr / 500g
-  { store: 'Lidl', ingredient: 'Selleri', discount: 35, validUntil: week6End },       // Stjälkselleri 11,90 kr/kg
+  // ========== LIDL ÄLSHEM - Vecka 7 ==========
+  // Bröd & kakor
+  { store: 'Lidl', ingredient: 'Bagels', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Frukostbullar', discount: 20, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Wienerbröd', discount: 25, validUntil: week7End },
   
-  // Kött & Fisk
-  { store: 'Lidl', ingredient: 'Kycklinglårfilé', discount: 30, validUntil: week6End },  // 119 kr/kg
-  { store: 'Lidl', ingredient: 'Kycklingfilé', discount: 35, validUntil: week6End },     // Marinerad 99 kr
-  { store: 'Lidl', ingredient: 'Kyckling', discount: 30, validUntil: week6End },         // Minutstrimlor 69,90 kr
-  { store: 'Lidl', ingredient: 'Lax', discount: 25, validUntil: week6End },              // Kallrökt/gravad 109 kr
-  { store: 'Lidl', ingredient: 'Biff', discount: 20, validUntil: week6End },             // Pepperbiff 179 kr/kg
-  { store: 'Lidl', ingredient: 'Pulled pork', discount: 30, validUntil: week6End },      // 49,90 kr
-  { store: 'Lidl', ingredient: 'Fläsk', discount: 40, validUntil: week6End },            // Skinkgrytbitar 39,90 kr
-
-  // ==================== VECKA 7 (10-16 februari 2025) ====================
-  // ICA - Vecka 7
-  { store: 'ICA', ingredient: 'Torsk', discount: 35, validUntil: week7End },
-  { store: 'ICA', ingredient: 'Bacon', discount: 30, validUntil: week7End },
-  { store: 'ICA', ingredient: 'Grädde', discount: 25, validUntil: week7End },
-  { store: 'ICA', ingredient: 'Paprika', discount: 35, validUntil: week7End },
-  { store: 'ICA', ingredient: 'Avokado', discount: 30, validUntil: week7End },
-  { store: 'ICA', ingredient: 'Fullkornsbröd', discount: 25, validUntil: week7End },
-  { store: 'ICA', ingredient: 'Hallon', discount: 40, validUntil: week7End },
-  { store: 'ICA', ingredient: 'Spaghetti', discount: 20, validUntil: week7End },
-  { store: 'ICA', ingredient: 'Kesella', discount: 30, validUntil: week7End },
-  { store: 'ICA', ingredient: 'Grekisk yoghurt', discount: 25, validUntil: week7End },
-
-  // Coop - Vecka 7
-  { store: 'Coop', ingredient: 'Kycklingfilé', discount: 35, validUntil: week7End },
-  { store: 'Coop', ingredient: 'Champinjoner', discount: 30, validUntil: week7End },
-  { store: 'Coop', ingredient: 'Lök', discount: 25, validUntil: week7End },
-  { store: 'Coop', ingredient: 'Morot', discount: 30, validUntil: week7End },
-  { store: 'Coop', ingredient: 'Sallad', discount: 35, validUntil: week7End },
-  { store: 'Coop', ingredient: 'Tortillabröd', discount: 30, validUntil: week7End },
-  { store: 'Coop', ingredient: 'Fetaost', discount: 25, validUntil: week7End },
-  { store: 'Coop', ingredient: 'Ägg', discount: 30, validUntil: week7End },
-
-  // Willys - Vecka 7
-  { store: 'Willys', ingredient: 'Lax', discount: 35, validUntil: week7End },
-  { store: 'Willys', ingredient: 'Potatis', discount: 25, validUntil: week7End },
-  { store: 'Willys', ingredient: 'Pasta', discount: 20, validUntil: week7End },
-  { store: 'Willys', ingredient: 'Mjölk', discount: 20, validUntil: week7End },
-  { store: 'Willys', ingredient: 'Havregryn', discount: 35, validUntil: week7End },
-  { store: 'Willys', ingredient: 'Lingonsylt', discount: 25, validUntil: week7End },
-
-  // ==================== VECKA 8 (17-23 februari 2025) ====================
-  // ICA - Vecka 8
-  { store: 'ICA', ingredient: 'Nötfärs', discount: 35, validUntil: week8End },
-  { store: 'ICA', ingredient: 'Räkor', discount: 40, validUntil: week8End },
-  { store: 'ICA', ingredient: 'Lök', discount: 25, validUntil: week8End },
-  { store: 'ICA', ingredient: 'Champinjoner', discount: 30, validUntil: week8End },
-  { store: 'ICA', ingredient: 'Ris', discount: 25, validUntil: week8End },
-  { store: 'ICA', ingredient: 'Mozzarella', discount: 30, validUntil: week8End },
-  { store: 'ICA', ingredient: 'Kiwi', discount: 35, validUntil: week8End },
-
-  // Coop - Vecka 8
-  { store: 'Coop', ingredient: 'Fläskfilé', discount: 30, validUntil: week8End },
-  { store: 'Coop', ingredient: 'Broccoli', discount: 30, validUntil: week8End },
-  { store: 'Coop', ingredient: 'Pasta', discount: 20, validUntil: week8End },
-  { store: 'Coop', ingredient: 'Smör', discount: 25, validUntil: week8End },
-
-  // Willys - Vecka 8
-  { store: 'Willys', ingredient: 'Torsk', discount: 35, validUntil: week8End },
-  { store: 'Willys', ingredient: 'Tomat', discount: 35, validUntil: week8End },
-  { store: 'Willys', ingredient: 'Gurka', discount: 25, validUntil: week8End },
-  { store: 'Willys', ingredient: 'Yoghurt', discount: 25, validUntil: week8End },
+  // Chark & delikatessen
+  { store: 'Lidl', ingredient: 'Kassler', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Skinka', discount: 30, validUntil: week7End },
+  
+  // Drycker
+  { store: 'Lidl', ingredient: 'Energidryck', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Nocco', discount: 20, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Red Bull', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Läsk', discount: 35, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Coca-Cola', discount: 35, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Pepsi', discount: 35, validUntil: week7End },
+  
+  // Fisk & skaldjur
+  { store: 'Lidl', ingredient: 'Lax', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Makrill', discount: 25, validUntil: week7End },
+  
+  // Frukt & bär
+  { store: 'Lidl', ingredient: 'Blåbär', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Citron', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Clementin', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Dadlar', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Vindruvor', discount: 30, validUntil: week7End },
+  
+  // Glass
+  { store: 'Lidl', ingredient: 'Glass', discount: 35, validUntil: week7End },
+  
+  // Grönsaker
+  { store: 'Lidl', ingredient: 'Morötter', discount: 40, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Morot', discount: 40, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Paprika', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Tomat', discount: 25, validUntil: week7End },
+  
+  // Kött
+  { store: 'Lidl', ingredient: 'Bladfärs', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Nötfärs', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Fläskkarré', discount: 35, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Fläskfilé', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Kycklingfilé', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Kyckling', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Kycklinglår', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Lammfärs', discount: 25, validUntil: week7End },
+  
+  // Mejeri
+  { store: 'Lidl', ingredient: 'Filmjölk', discount: 20, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Keso', discount: 30, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Smör', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Yoghurt', discount: 35, validUntil: week7End },
+  
+  // Ost
+  { store: 'Lidl', ingredient: 'Cheddar', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Gouda', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Grana Padano', discount: 20, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Ost', discount: 25, validUntil: week7End },
+  
+  // Skafferi
+  { store: 'Lidl', ingredient: 'Honung', discount: 20, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Ris', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Basmatiris', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Oliver', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Pesto', discount: 20, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Tomatsås', discount: 25, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Solrosolja', discount: 20, validUntil: week7End },
+  
+  // Snacks & godis
+  { store: 'Lidl', ingredient: 'Chips', discount: 40, validUntil: week7End },
+  { store: 'Lidl', ingredient: 'Choklad', discount: 30, validUntil: week7End },
+  
+  // ========== WILLYS UMEÅ - Vecka 7 ==========
+  // Bröd & kakor
+  { store: 'Willys', ingredient: 'Kex', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Ballerina', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Singoalla', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Skogaholmslimpa', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Bröd', discount: 30, validUntil: week7End },
+  
+  // Chark & delikatessen
+  { store: 'Willys', ingredient: 'Bacon', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Porchetta', discount: 30, validUntil: week7End },
+  
+  // Drycker
+  { store: 'Willys', ingredient: 'Dryck', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Red Bull', discount: 40, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Energidryck', discount: 40, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Kaffe', discount: 25, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Läsk', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Coca-Cola', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Pepsi', discount: 35, validUntil: week7End },
+  
+  // Fisk & skaldjur
+  { store: 'Willys', ingredient: 'Lax', discount: 40, validUntil: week7End },
+  
+  // Frukt & bär
+  { store: 'Willys', ingredient: 'Blodapelsin', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Apelsin', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Äpple', discount: 25, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Pink Lady', discount: 25, validUntil: week7End },
+  
+  // Färdigmat
+  { store: 'Willys', ingredient: 'Färdigrätt', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Kycklingnuggets', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Pastasås', discount: 40, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Pizza', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Pulled Pork', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Pulled Chicken', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Schnitzel', discount: 25, validUntil: week7End },
+  
+  // Glass
+  { store: 'Willys', ingredient: 'Glass', discount: 40, validUntil: week7End },
+  
+  // Grönsaker
+  { store: 'Willys', ingredient: 'Broccoli', discount: 45, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Morot', discount: 45, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Morötter', discount: 45, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Champinjoner', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Lök', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Sötpotatis', discount: 25, validUntil: week7End },
+  
+  // Korv & pålägg
+  { store: 'Willys', ingredient: 'Korv', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Varmkorv', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Pålägg', discount: 35, validUntil: week7End },
+  
+  // Kött
+  { store: 'Willys', ingredient: 'Blandfärs', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Nötfärs', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Entrecôte', discount: 25, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Fläskschnitzel', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Fläskfilé', discount: 35, validUntil: week7End },
+  
+  // Mejeri
+  { store: 'Willys', ingredient: 'Kvarg', discount: 40, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Yoghurt', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Ägg', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Proteinpudding', discount: 35, validUntil: week7End },
+  
+  // Ost
+  { store: 'Willys', ingredient: 'Ost', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Hushållsost', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Prästost', discount: 35, validUntil: week7End },
+  
+  // Skafferi
+  { store: 'Willys', ingredient: 'Flingor', discount: 25, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Havregryn', discount: 30, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Pasta', discount: 40, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Ris', discount: 25, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Tortilla', discount: 40, validUntil: week7End },
+  
+  // Snacks & godis
+  { store: 'Willys', ingredient: 'Godis', discount: 35, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Snacks', discount: 40, validUntil: week7End },
+  { store: 'Willys', ingredient: 'Chips', discount: 40, validUntil: week7End },
+  
+  // ========== ICA MAXI UMEÅ - Vecka 7 ==========
+  // Bröd & kakor
+  { store: 'ICA', ingredient: 'Kex', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Ballerina', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Singoalla', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Skogaholmslimpa', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Bröd', discount: 30, validUntil: week7End },
+  
+  // Chark & delikatessen
+  { store: 'ICA', ingredient: 'Bacon', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Porchetta', discount: 30, validUntil: week7End },
+  
+  // Drycker
+  { store: 'ICA', ingredient: 'Dryck', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Red Bull', discount: 40, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Energidryck', discount: 40, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Kaffe', discount: 25, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Läsk', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Coca-Cola', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Pepsi', discount: 35, validUntil: week7End },
+  
+  // Fisk & skaldjur
+  { store: 'ICA', ingredient: 'Lax', discount: 40, validUntil: week7End },
+  
+  // Frukt & bär
+  { store: 'ICA', ingredient: 'Blodapelsin', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Apelsin', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Äpple', discount: 25, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Pink Lady', discount: 25, validUntil: week7End },
+  
+  // Färdigmat
+  { store: 'ICA', ingredient: 'Färdigrätt', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Kycklingnuggets', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Pastasås', discount: 40, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Pizza', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Pulled Pork', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Pulled Chicken', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Schnitzel', discount: 25, validUntil: week7End },
+  
+  // Glass
+  { store: 'ICA', ingredient: 'Glass', discount: 40, validUntil: week7End },
+  
+  // Grönsaker
+  { store: 'ICA', ingredient: 'Broccoli', discount: 45, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Morot', discount: 45, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Morötter', discount: 45, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Champinjoner', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Lök', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Sötpotatis', discount: 25, validUntil: week7End },
+  
+  // Korv & pålägg
+  { store: 'ICA', ingredient: 'Korv', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Varmkorv', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Pålägg', discount: 35, validUntil: week7End },
+  
+  // Kött
+  { store: 'ICA', ingredient: 'Blandfärs', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Nötfärs', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Entrecôte', discount: 25, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Fläskschnitzel', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Fläskfilé', discount: 35, validUntil: week7End },
+  
+  // Mejeri
+  { store: 'ICA', ingredient: 'Kvarg', discount: 40, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Yoghurt', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Ägg', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Proteinpudding', discount: 35, validUntil: week7End },
+  
+  // Ost
+  { store: 'ICA', ingredient: 'Ost', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Hushållsost', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Prästost', discount: 35, validUntil: week7End },
+  
+  // Skafferi
+  { store: 'ICA', ingredient: 'Flingor', discount: 25, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Havregryn', discount: 30, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Pasta', discount: 40, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Ris', discount: 25, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Tortilla', discount: 40, validUntil: week7End },
+  
+  // Snacks & godis
+  { store: 'ICA', ingredient: 'Godis', discount: 35, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Snacks', discount: 40, validUntil: week7End },
+  { store: 'ICA', ingredient: 'Chips', discount: 40, validUntil: week7End },
+  
+  // ========== STORA COOP TOMTEBO - Vecka 7 ==========
+  // Bröd & kakor
+  { store: 'Coop', ingredient: 'Kex', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Ballerina', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Singoalla', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Skogaholmslimpa', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Bröd', discount: 30, validUntil: week7End },
+  
+  // Chark & delikatessen
+  { store: 'Coop', ingredient: 'Bacon', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Porchetta', discount: 30, validUntil: week7End },
+  
+  // Drycker
+  { store: 'Coop', ingredient: 'Dryck', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Red Bull', discount: 40, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Energidryck', discount: 40, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Kaffe', discount: 25, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Läsk', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Coca-Cola', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Pepsi', discount: 35, validUntil: week7End },
+  
+  // Fisk & skaldjur
+  { store: 'Coop', ingredient: 'Lax', discount: 40, validUntil: week7End },
+  
+  // Frukt & bär
+  { store: 'Coop', ingredient: 'Blodapelsin', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Apelsin', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Äpple', discount: 25, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Pink Lady', discount: 25, validUntil: week7End },
+  
+  // Färdigmat
+  { store: 'Coop', ingredient: 'Färdigrätt', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Kycklingnuggets', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Pastasås', discount: 40, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Pizza', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Pulled Pork', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Pulled Chicken', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Schnitzel', discount: 25, validUntil: week7End },
+  
+  // Glass
+  { store: 'Coop', ingredient: 'Glass', discount: 40, validUntil: week7End },
+  
+  // Grönsaker
+  { store: 'Coop', ingredient: 'Broccoli', discount: 45, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Morot', discount: 45, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Morötter', discount: 45, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Champinjoner', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Lök', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Sötpotatis', discount: 25, validUntil: week7End },
+  
+  // Korv & pålägg
+  { store: 'Coop', ingredient: 'Korv', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Varmkorv', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Pålägg', discount: 35, validUntil: week7End },
+  
+  // Kött
+  { store: 'Coop', ingredient: 'Blandfärs', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Nötfärs', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Entrecôte', discount: 25, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Fläskschnitzel', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Fläskfilé', discount: 35, validUntil: week7End },
+  
+  // Mejeri
+  { store: 'Coop', ingredient: 'Kvarg', discount: 40, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Yoghurt', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Ägg', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Proteinpudding', discount: 35, validUntil: week7End },
+  
+  // Ost
+  { store: 'Coop', ingredient: 'Ost', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Hushållsost', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Prästost', discount: 35, validUntil: week7End },
+  
+  // Skafferi
+  { store: 'Coop', ingredient: 'Flingor', discount: 25, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Havregryn', discount: 30, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Pasta', discount: 40, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Ris', discount: 25, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Tortilla', discount: 40, validUntil: week7End },
+  
+  // Snacks & godis
+  { store: 'Coop', ingredient: 'Godis', discount: 35, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Snacks', discount: 40, validUntil: week7End },
+  { store: 'Coop', ingredient: 'Chips', discount: 40, validUntil: week7End },
 ];
 
 // Hjälpfunktion för att hitta kampanjer för specifik ingrediens

@@ -137,18 +137,34 @@ Du MÅSTE svara i exakt detta JSON-format (ingen annan text):
     ]
   },
   "totalEstimate": "XXX kr",
-  "savings": "XXX kr",
-  "recipeTips": [
-    {"title": "Receptnamn", "ingredients": ["ing1", "ing2"], "steps": ["steg1", "steg2", "steg3"]},
-    ...
-  ]
+  "savings": "XXX kr"
 }
 
 Prioritera ALLTID:
 - Ekonomiskt: Maximera användning av rabatter
 - Tidssparande: Minimera antal butiker (1-2 huvudbutiker)
 - Variation: Blanda kött/fisk/vego, inte samma rätt i rad
-- Realistiskt: Enkla vardagsrätter, rätt portioner"""
+- Realistiskt: Enkla vardagsrätter, rätt portioner
+- Om batch-lagning: Föreslå rätter som kan lagas i större mängd och återanvändas"""
+
+    # Map meals to Swedish
+    meal_map = {
+        'frukost': 'Frukost',
+        'lunch': 'Lunch',
+        'middag': 'Middag',
+        'mellanmal': 'Mellanmål'
+    }
+    meals_text = ', '.join([meal_map.get(m, m) for m in request.selectedMeals])
+    
+    # Batch cooking text
+    batch_text = ""
+    if request.wantsBatchCooking:
+        batch_text = "\n- **BATCH-LAGNING AKTIVERAD**: Föreslå rätter som kan lagas i större mängd och återanvändas under veckan (t.ex. köttfärssås, gryta, soppa)"
+    
+    # Lunchbox text
+    lunchbox_text = ""
+    if request.lunchboxCount > 0:
+        lunchbox_text = f"\n- Matlådor: {request.lunchboxCount} per dag (lunch ska kunna tas med)"
 
     user_prompt = f"""Skapa en veckomeny för vecka 7 (9-15 februari 2025).
 
@@ -158,6 +174,7 @@ Prioritera ALLTID:
 - Kostpreferens: {diet_text}
 - Allergier: {allergies_text}
 - Valda butiker: {', '.join(request.selectedStores)}
+- Måltider per dag: {meals_text}{lunchbox_text}{batch_text}
 
 **AKTUELLA RABATTER:**
 {discounts_text}

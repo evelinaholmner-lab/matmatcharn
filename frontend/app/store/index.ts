@@ -148,7 +148,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     // Filtrera baserat på valda butiker och användarpreferenser
     return currentCampaigns
       .filter(campaign => userProfile.selectedStores.includes(campaign.store))
-      .filter(campaign => matchesPreferences(campaign, userProfile.dietaryPreference, userProfile.allergies))
+      .filter(campaign => matchesPreferences(campaign, userProfile.dietaryPreferences, userProfile.allergies))
       .sort((a, b) => b.discount - a.discount); // Högst rabatt först
   },
 

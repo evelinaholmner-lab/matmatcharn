@@ -1,7 +1,14 @@
 // Type definitions for the app
 
-// Nya kostpreferenser
-export type DietaryPreference = 'allatare' | 'pescetariansk' | 'flexitariansk';
+// Utökade kostpreferenser (flerval)
+export type DietaryPreference = 
+  | 'allatare' 
+  | 'pescetariansk' 
+  | 'flexitariansk'
+  | 'vegetarian'
+  | 'vegan'
+  | 'keto'
+  | 'lchf';
 
 // Utökade allergier
 export type Allergen = 
@@ -15,7 +22,9 @@ export type Allergen =
   | 'skaldjur' 
   | 'sesam';
 
-export type MealType = 'frukost' | 'lunch' | 'middag' | 'mellanmål';
+// Måltidstyper
+export type MealType = 'frukost' | 'lunch' | 'middag' | 'mellanmal';
+
 export type Store = 'ICA' | 'Coop' | 'Willys' | 'Lidl';
 
 export interface Campaign {
@@ -37,10 +46,14 @@ export interface Campaign {
 
 export interface UserProfile {
   numberOfPeople: number;
-  dietaryPreference: DietaryPreference; // Ändrat till singular
+  dietaryPreferences: DietaryPreference[]; // Flerval
   allergies: Allergen[];
   location: string;
   selectedStores: Store[];
+  // Nya fält
+  selectedMeals: MealType[]; // Vilka måltider per dag
+  lunchboxCount: number; // Antal matlådor (0 = ingen)
+  wantsBatchCooking: boolean; // Preppa/batch-laga
   onboardingCompleted: boolean;
 }
 
@@ -57,6 +70,7 @@ export type IngredientCategory =
   | 'Övrigt';
 
 export interface ShoppingItem {
+  id: string;
   ingredient: string;
   amount: number;
   unit: string;

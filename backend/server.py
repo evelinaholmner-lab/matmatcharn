@@ -94,10 +94,14 @@ async def generate_menu(request: MenuGenerateRequest):
     # Map dietary preference to Swedish
     diet_map = {
         'allatare': 'Allätare (allt går bra)',
-        'pescetariansk': 'Pescetariansk (ingen kött, fisk ok)',
-        'flexitariansk': 'Flexitariansk (mestadels vegetariskt)'
+        'pescetariansk': 'Pescetariansk (fisk ok, ej kött)',
+        'flexitariansk': 'Flexitariansk (mestadels vegetariskt)',
+        'vegetarian': 'Vegetarian (ingen kött eller fisk)',
+        'vegan': 'Vegan (inga animaliska produkter)',
+        'keto': 'Keto (mycket fett, lite kolhydrater)',
+        'lchf': 'LCHF (låg kolhydrat, hög fett)'
     }
-    diet_text = diet_map.get(request.dietaryPreference, request.dietaryPreference)
+    diet_text = ', '.join([diet_map.get(d, d) for d in request.dietaryPreferences])
     
     # Map allergies to Swedish
     allergy_map = {

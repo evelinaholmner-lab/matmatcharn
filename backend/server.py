@@ -40,10 +40,13 @@ class StatusCheckCreate(BaseModel):
 
 class MenuGenerateRequest(BaseModel):
     numberOfPeople: int
-    dietaryPreference: str  # 'allatare', 'pescetariansk', 'flexitariansk'
+    dietaryPreferences: List[str]  # Flerval: 'allatare', 'pescetariansk', 'flexitariansk', 'vegetarian', 'vegan', 'keto', 'lchf'
     allergies: List[str]
     location: str
     selectedStores: List[str]
+    selectedMeals: List[str] = ['frukost', 'lunch', 'middag']  # Vilka måltider per dag
+    lunchboxCount: int = 0  # Antal matlådor
+    wantsBatchCooking: bool = False  # Preppa/batch-laga
     discounts: List[dict]  # Lista med rabatter från butikerna
 
 class MenuResponse(BaseModel):

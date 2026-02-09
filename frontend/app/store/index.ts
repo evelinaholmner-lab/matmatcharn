@@ -45,7 +45,7 @@ const getIngredientCategory = (ingredientName: string): IngredientCategory => {
 // Kontrollera om en produkt matchar användarens preferenser
 const matchesPreferences = (
   campaign: any,
-  dietaryPreference: DietaryPreference,
+  dietaryPreferences: DietaryPreference[],
   allergies: Allergen[]
 ): boolean => {
   const name = campaign.ingredient.toLowerCase();

@@ -92,8 +92,8 @@ export default function OnboardingStep3() {
 
     await setUserProfile(profile);
     
-    // Navigera till kampanjvy
-    router.replace('/weekly-plan');
+    // Navigera till AI-genererad veckomeny
+    router.replace('/generated-menu');
   };
 
   const displayedStores = showAllStores ? allStores : nearbyStores;

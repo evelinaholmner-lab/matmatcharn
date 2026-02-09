@@ -181,14 +181,14 @@ export default function GeneratedMenuScreen() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          numberOfPeople: userProfile.numberOfPeople,
-          dietaryPreferences: userProfile.dietaryPreferences,
-          allergies: userProfile.allergies,
-          location: userProfile.location,
-          selectedStores: userProfile.selectedStores,
-          selectedMeals: userProfile.selectedMeals,
-          lunchboxCount: userProfile.lunchboxCount,
-          wantsBatchCooking: userProfile.wantsBatchCooking,
+          numberOfPeople: userProfile.numberOfPeople || 2,
+          dietaryPreferences: userProfile.dietaryPreferences || ['allatare'],
+          allergies: userProfile.allergies || [],
+          location: userProfile.location || 'Umeå',
+          selectedStores: userProfile.selectedStores || ['ICA'],
+          selectedMeals: userProfile.selectedMeals || ['frukost', 'lunch', 'middag'],
+          lunchboxCount: userProfile.lunchboxCount || 0,
+          wantsBatchCooking: userProfile.wantsBatchCooking || false,
           discounts: discounts
         })
       });
